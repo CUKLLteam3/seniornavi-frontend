@@ -1,0 +1,561 @@
+/* 기본 리셋 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+/* 앱 컨테이너 */
+.app-container {
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100vh;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+  padding-bottom: 80px; /* 하단 네비게이션 공간 */
+  min-height: 100vh;
+}
+
+/* 페이지 기본 스타일 */
+.page {
+  padding: 20px;
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* 카드 스타일 */
+.card {
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 제목 스타일 */
+h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #374151;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+/* 텍스트 색상 */
+.text-gray {
+  color: #6b7280;
+}
+
+.text-primary-600 {
+  color: #2563eb;
+}
+
+/* 입력 필드 */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 그리드 레이아웃 */
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+/* 플렉스 레이아웃 */
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+/* 스페이싱 */
+.space-y-1 > * + * {
+  margin-top: 4px;
+}
+
+.space-y-2 > * + * {
+  margin-top: 8px;
+}
+
+.space-y-3 > * + * {
+  margin-top: 12px;
+}
+
+.space-y-4 > * + * {
+  margin-top: 16px;
+}
+
+.space-x-2 > * + * {
+  margin-left: 8px;
+}
+
+.space-x-3 > * + * {
+  margin-left: 12px;
+}
+
+/* 마진/패딩 */
+.mb-1 {
+  margin-bottom: 4px;
+}
+.mb-2 {
+  margin-bottom: 8px;
+}
+.mb-3 {
+  margin-bottom: 12px;
+}
+.mb-4 {
+  margin-bottom: 16px;
+}
+.mb-6 {
+  margin-bottom: 24px;
+}
+.mb-8 {
+  margin-bottom: 32px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+.mt-6 {
+  margin-top: 24px;
+}
+
+.p-2 {
+  padding: 8px;
+}
+.p-3 {
+  padding: 12px;
+}
+.p-4 {
+  padding: 16px;
+}
+
+.px-2 {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.px-4 {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.px-6 {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.py-2 {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.py-8 {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+/* 크기 */
+.w-full {
+  width: 100%;
+}
+.h-5 {
+  height: 20px;
+}
+
+/* 폰트 */
+.text-xs {
+  font-size: 12px;
+}
+.text-sm {
+  font-size: 14px;
+}
+.text-lg {
+  font-size: 18px;
+}
+.text-xl {
+  font-size: 20px;
+}
+.text-2xl {
+  font-size: 24px;
+}
+.text-3xl {
+  font-size: 30px;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+
+/* 위치 */
+.fixed {
+  position: fixed;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+
+.top-4 {
+  top: 16px;
+}
+.left-4 {
+  left: 16px;
+}
+.right-4 {
+  right: 16px;
+}
+.bottom-0 {
+  bottom: 0;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.left-1\/2 {
+  left: 50%;
+}
+.transform {
+  transform: translateX(-50%);
+}
+.-translate-x-1\/2 {
+  transform: translateX(-50%);
+}
+
+/* 배경색 */
+.bg-white {
+  background-color: white;
+}
+.bg-blue-50 {
+  background-color: #eff6ff;
+}
+.bg-green-50 {
+  background-color: #f0fdf4;
+}
+.bg-orange-50 {
+  background-color: #fff7ed;
+}
+.bg-purple-50 {
+  background-color: #faf5ff;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+.bg-blue-600 {
+  background-color: #2563eb;
+}
+.bg-red-500 {
+  background-color: #ef4444;
+}
+.bg-red-600 {
+  background-color: #dc2626;
+}
+.bg-green-500 {
+  background-color: #10b981;
+}
+.bg-green-600 {
+  background-color: #059669;
+}
+.bg-orange-500 {
+  background-color: #f97316;
+}
+.bg-orange-600 {
+  background-color: #ea580c;
+}
+.bg-purple-500 {
+  background-color: #8b5cf6;
+}
+.bg-purple-600 {
+  background-color: #7c3aed;
+}
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+.bg-gray-600 {
+  background-color: #4b5563;
+}
+
+/* 호버 효과 */
+.hover\:bg-blue-600:hover {
+  background-color: #2563eb;
+}
+.hover\:bg-red-600:hover {
+  background-color: #dc2626;
+}
+.hover\:bg-green-600:hover {
+  background-color: #059669;
+}
+.hover\:bg-orange-600:hover {
+  background-color: #ea580c;
+}
+.hover\:bg-purple-600:hover {
+  background-color: #7c3aed;
+}
+.hover\:bg-gray-600:hover {
+  background-color: #4b5563;
+}
+
+.hover\:text-primary-600:hover {
+  color: #2563eb;
+}
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+.hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 텍스트 색상 */
+.text-white {
+  color: white;
+}
+.text-gray-400 {
+  color: #9ca3af;
+}
+.text-gray-500 {
+  color: #6b7280;
+}
+.text-gray-600 {
+  color: #4b5563;
+}
+.text-gray-700 {
+  color: #374151;
+}
+.text-blue-600 {
+  color: #2563eb;
+}
+.text-blue-700 {
+  color: #1d4ed8;
+}
+.text-blue-800 {
+  color: #1e40af;
+}
+.text-green-600 {
+  color: #059669;
+}
+.text-green-700 {
+  color: #047857;
+}
+.text-green-800 {
+  color: #065f46;
+}
+.text-orange-700 {
+  color: #c2410c;
+}
+.text-orange-800 {
+  color: #9a3412;
+}
+.text-purple-700 {
+  color: #6d28d9;
+}
+.text-purple-800 {
+  color: #5b21b6;
+}
+
+/* 테두리 */
+.border {
+  border-width: 1px;
+}
+.border-2 {
+  border-width: 2px;
+}
+.border-t {
+  border-top-width: 1px;
+}
+.border-dashed {
+  border-style: dashed;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+.border-orange-300 {
+  border-color: #fdba74;
+}
+.border-purple-300 {
+  border-color: #c4b5fd;
+}
+
+/* 둥근 모서리 */
+.rounded-lg {
+  border-radius: 8px;
+}
+.rounded-xl {
+  border-radius: 12px;
+}
+.rounded-full {
+  border-radius: 50%;
+}
+
+/* 그림자 */
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 애니메이션 */
+.transition-colors {
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+.transition-shadow {
+  transition: box-shadow 0.15s ease-in-out;
+}
+.transition-all {
+  transition: all 0.15s ease-in-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 텍스트 정렬 */
+.text-center {
+  text-align: center;
+}
+
+/* 기타 유틸리티 */
+.max-w-sm {
+  max-width: 400px;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* 반응형 (모바일 우선) */
+@media (max-width: 400px) {
+  .app-container {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .page {
+    padding: 16px;
+  }
+}
