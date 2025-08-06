@@ -12,6 +12,9 @@ import { createApplicationHandlers } from './utils/appHandlers';
 import { HomeScreen } from './components/screens/HomeScreen';
 import { LoginScreen } from './components/screens/LoginScreen';
 import { JobListScreen } from './components/screens/JobListScreen';
+import { JobDetailScreen } from './components/screens/JobDetailScreen';
+import { TrainingListScreen } from './components/screens/TrainingListScreen';
+import { TrainingDetailScreen } from './components/screens/TrainingDetailScreen';
 import { BottomNavigation } from './components/layout/BottomNavigation';
 import { VoiceGuide } from './components/layout/VoiceGuide';
 
@@ -25,6 +28,9 @@ function App() {
   
   // 현재 화면
   const [currentScreen, setCurrentScreen] = useState(SCREENS.HOME);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [selectedTraining, setSelectedTraining] = useState(null);
+
   
   // 앱 데이터
   const [applications, setApplications] = useState(INITIAL_APPLICATIONS);
@@ -74,6 +80,13 @@ function App() {
   const handleNavigate = (screen, data = null) => {
     console.log('화면 이동:', screen, data);
     setCurrentScreen(screen);
+
+    if (screen === SCREENS.JOB_DETAIL && data) {
+      setSelectedJob(data);
+    } else if (screen === SCREENS.TRAINING_DETAIL && data) {
+      setSelectedTraining(data);
+    }
+
   };
   
   // 회원가입 (임시)
@@ -117,12 +130,39 @@ function App() {
         {currentScreen === SCREENS.JOB_LIST && (
           <JobListScreen
             onNavigate={handleNavigate}
+            onBack={() => setCurrentScreen(SCREENS.HOME)}
+            onApply={handleApply}
+          />
+        )}
+
+        {currentScreen === SCREENS.JOB_DETAIL && (
+          <JobDetailScreen
+            job={selectedJob}
+            onBack={() => setCurrentScreen(SCREENS.JOB_LIST)}
             onApply={handleApply}
             onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
           />
         )}
+
+        {currentScreen === SCREENS.TRAINING_LIST && (
+          <TrainingListScreen
+            onNavigate={handleNavigate}
+            onBack={() => setCurrentScreen(SCREENS.HOME)}
+            onApply={handleApply}
+          />
+        )}
         
+        {currentScreen === SCREENS.TRAINING_DETAIL && (
+          <TrainingDetailScreen
+            training={selectedTraining}
+            onBack={() => setCurrentScreen(SCREENS.TRAINING_LIST)}
+            onApply={handleApply}
+            onToggleFavorite={handleToggleFavorite}
+            isFavorite={isFavorite}
+          />
+        )}
+
         {/* TODO: 다른 화면들 팀원들이 추가 */}
         
         {/* 기본 화면 (개발 중) */}
