@@ -73,12 +73,9 @@ export const JobListScreen = ({
 
   return (
     <div className="page">
-      <div className="flex">
-        <button className="bg-white" onClick={onBack}>🠔</button>
-        <h1 className="text-2xl font-bold text-primary-600 mb-4">
+      <h1 className="text-2xl font-bold text-primary-600 mb-4">
         일자리 찾기
-        </h1>
-      </div>
+      </h1>
 
       {/* 검색 */}
       <div className="mb-4 gap-2 flex">
@@ -101,7 +98,7 @@ export const JobListScreen = ({
         <button className="px-4 text-gray-500">상세 필터</button>
         <button className="px-4 text-gray-500">내 주변</button>
       </div>
-      <h2 className="mb-4">전체 {jobs.length}개</h2>
+      <h2 className="mb-4">전체 {jobs.filter.length}개</h2>
       
       {/* 일자리 목록 */}
       <div className="space-y-4">

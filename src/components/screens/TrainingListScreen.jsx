@@ -66,13 +66,9 @@ export const TrainingListScreen = ({ onNavigate, onBack, onApply }) => {
 
   return (
     <div className="page">
-      <div className="flex">
-        <button className="bg-white" onClick={onBack}>🠔</button>
-        <h1 className="text-2xl font-bold text-primary-600 mb-4">
-        교육 프로그램
+      <h1 className="text-2xl font-bold text-primary-600 mb-4">
+          교육 프로그램
       </h1>
-      </div>
-      
 
       {/* 검색 */}
       <div className="mb-4 gap-2 flex">
