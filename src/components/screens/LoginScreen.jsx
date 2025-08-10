@@ -1,119 +1,175 @@
-import React from 'react';
-import logoImg from './logo.png'; // screens 폴더에 logo.png 있어야 함
+import { useMemo, useState } from "react";
+import "./login.css"; // 아래 CSS 파일을 같은 폴더에 두거나 경로 맞춰서 임포트
 
-const LoginScreen = ({ onLogin, onSignup, onForgotPassword }) => {
-  const handleSubmit = (e) => {
+export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
+  const [tab, setTab] = useState("password"); // 'password' | 'sms'(비활성)
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // 010-1234-5678 포맷 표시
+  const formattedPhone = useMemo(() => {
+    const d = phone.replace(/\D/g, "");
+    if (d.length <= 3) return d;
+    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
+    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
+  }, [phone]);
+
+  const phoneValid = /^01[016789]-?\d{3,4}-?\d{4}$/.test(phone);
+  const canSubmit = tab === "password" && phoneValid && password.length >= 4 && !loading;
+
+  function handleSubmit(e) {
     e.preventDefault();
-    const data = {
-      method: 'phone',
-      phone: e.target.phone.value,
-      password: e.target.password.value,
-    };
-    onLogin(data);
-  };
+    if (!canSubmit) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onLogin?.({ method: "phone", phone, password });
+    }, 400);
+  }
+
+  function handleKakao() {
+    if (loading) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onLogin?.({ method: "kakao" });
+    }, 400);
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 px-4 py-8">
-      {/* 로고 */}
-      <div className="bg-white rounded-2xl p-4 shadow-md mb-4">
-        <img src={logoImg} alt="로고" className="w-20 h-20 object-contain" />
-      </div>
-
-      {/* 텍스트 설명 */}
-      <div className="text-center mb-4">
-        <h1 className="text-4xl font-extrabold text-gray-900">Re-fly</h1>
-        <p className="text-base mt-2 text-gray-700">새로운 시작을 위한</p>
-        <p className="text-lg font-bold text-purple-600">시니어 취업 플랫폼</p>
-      </div>
-
-      {/* 아이콘 설명 */}
-      <div className="flex space-x-4 text-sm text-gray-600 mb-6">
-        <div>🔒 안전한 로그인</div>
-        <div>❤️ 시니어 맞춤</div>
-        <div>🕒 24시간 지원</div>
-      </div>
-
-      {/* 로그인 카드 */}
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">로그인</h2>
-        <p className="text-sm text-center text-gray-500 mt-1 mb-6">안전하고 간편한 로그인</p>
-
-        {/* 탭 */}
-        <div className="flex mb-4">
-          <button className="flex-1 py-2 border rounded-l-lg bg-blue-100 text-blue-700 font-semibold">
-            📱 휴대폰
-          </button>
-          <button className="flex-1 py-2 border rounded-r-lg text-gray-600">
-            💬 SMS 인증
-          </button>
+    <div className="rf-page">
+      <div className="rf-wrap">
+        {/* 로고 배지 */}
+        <div className="rf-logo-card">
+          <div className="rf-logo-grad">
+            <span className="rf-emoji">🛫</span>
+          </div>
         </div>
 
-        {/* 로그인 폼 */}
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-1 text-sm font-medium text-gray-700">휴대폰 번호</label>
-          <input
-            type="text"
-            name="phone"
-            placeholder="010-1234-5678"
-            className="w-full border rounded px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <label className="block mb-1 text-sm font-medium text-gray-700">비밀번호</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호를 입력하세요"
-            className="w-full border rounded px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-gray-200 text-pink-700 font-semibold py-2 rounded hover:bg-gray-300 transition"
-          >
-            📞 로그인하기
-          </button>
-        </form>
-
-        {/* 구분선 */}
-        <div className="flex items-center my-4 text-gray-400">
-          <hr className="flex-grow border-gray-300" />
-          <span className="mx-2 text-sm">또는</span>
-          <hr className="flex-grow border-gray-300" />
+        {/* 타이틀 */}
+        <div className="rf-title">
+          <h1>Re-fly</h1>
+          <p className="rf-sub1">새로운 시작을 위한</p>
+          <p className="rf-sub2">시니어 취업 플랫폼</p>
         </div>
 
-        {/* 카카오 로그인 */}
-        <button className="w-full bg-yellow-400 text-black font-semibold py-2 rounded hover:bg-yellow-500 transition mb-4">
-          🟡 카카오로 간편 로그인
-        </button>
+        {/* 포인트 3개 (한 줄 고정) */}
+        <div className="rf-points">
+          <div className="rf-point">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10B981" strokeWidth="2" className="rf-icon">
+              <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            <span>안전한 로그인</span>
+          </div>
+          <div className="rf-point">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="#F43F5E" className="rf-icon">
+              <path d="M12 21s-7-4.35-10-8.5C-0.5 8 3 3 7.5 5.5 9 6.3 10 7.7 12 9c2-1.3 3-2.7 4.5-3.5C21 3 24.5 8 22 12.5 19 16.65 12 21 12 21z" />
+            </svg>
+            <span>시니어 맞춤</span>
+          </div>
+          <div className="rf-point">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#6366F1" strokeWidth="2" className="rf-icon">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg>
+            <span>24시간 지원</span>
+          </div>
+        </div>
 
-        {/* 회원가입 / 비밀번호 찾기 */}
-        <div className="text-center text-sm text-gray-700">
-          <p className="mb-2">아직 회원이 아니신가요?</p>
-          <button
-            onClick={onSignup}
-            className="w-full bg-gray-200 text-gray-700 font-bold py-2 rounded mb-2 hover:bg-gray-300 transition"
-          >
+        {/* 로그인 카드 */}
+        <div className="rf-card">
+          <div className="rf-card-title">
+            <h2>로그인</h2>
+            <span className="rf-badge">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <p className="rf-card-sub">안전하고 간편한 로그인</p>
+
+          {/* 탭 */}
+          <div className="rf-tabs">
+            <button
+              type="button"
+              onClick={() => setTab("password")}
+              className={`rf-tab ${tab === "password" ? "is-active" : ""}`}
+            >
+              휴대폰
+            </button>
+            <button type="button" className="rf-tab" disabled title="SMS 인증 준비 중">
+              SMS 인증
+            </button>
+          </div>
+
+          {/* 폼 */}
+          <form onSubmit={handleSubmit} className="rf-form">
+            <div className="rf-field">
+              <label>휴대폰 번호</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formattedPhone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="010-1234-5678"
+                className={`rf-input ${phone && !phoneValid ? "rf-error" : ""}`}
+                inputMode="tel"
+                autoComplete="tel"
+              />
+              {phone && !phoneValid && <div className="rf-help-err">휴대폰 번호 형식이 올바르지 않습니다.</div>}
+            </div>
+
+            <div className="rf-field">
+              <label>비밀번호</label>
+              <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                autoComplete="current-password"
+                className="rf-input"
+              />
+            </div>
+
+            <button type="submit" disabled={!canSubmit} className={`rf-btn rf-btn-gray ${!canSubmit ? "is-disabled" : ""}`}>
+              로그인하기
+            </button>
+          </form>
+
+          {/* 또는 */}
+          <div className="rf-divider">
+            <span>또는</span>
+          </div>
+
+          {/* 카카오 */}
+          <button onClick={handleKakao} disabled={loading} className="rf-btn rf-btn-kakao">
+            <span className="rf-k-badge">K</span>
+            카카오로 간편 로그인
+          </button>
+
+          {/* 회원가입 */}
+          <div className="rf-center-txt">아직 회원이 아니신가요?</div>
+          <button onClick={onSignup} className="rf-btn rf-btn-primary">
             회원가입하기
           </button>
-          <button
-            onClick={onForgotPassword}
-            className="w-full bg-white border text-gray-600 font-semibold py-2 rounded hover:bg-gray-100 transition"
-          >
-            비밀번호 찾기
-          </button>
         </div>
-      </div>
 
-      {/* 하단 안내 */}
-      <div className="mt-6 text-xs text-center text-gray-500">
-        <p>🔒 <span className="font-semibold">개인정보 보호:</span> 모든 정보는 안전하게 암호화 처리됩니다</p>
-        <p>📞 <span className="font-semibold">고객지원:</span> 로그인에 문제가 있으신가요? 언제든 문의하세요</p>
-        <div className="mt-2 underline">
-          이용약관 · 개인정보처리방침 · 고객센터
+        {/* 하단 안내 */}
+        <div className="rf-footer">
+          <p>
+            <b>개인정보 보호:</b> 모든 정보는 암호화되어 안전하게 처리됩니다
+          </p>
+          <p>
+            <b>고객센터:</b> 로그인에 어려움이 있으면 언제든 문의하세요
+          </p>
+          <div className="rf-links">
+            <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">고객센터</a>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default LoginScreen;
+}

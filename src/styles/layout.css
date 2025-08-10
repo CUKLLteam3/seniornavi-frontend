@@ -1,0 +1,45 @@
+:root{
+  --frame-w: 412px;         /* 가이드 프레임 */
+  --gutter-x: 19px;         /* 좌우 패딩 */
+  --outer-bg: #ffdede;      /* ★ 바깥(양옆) 배경색 - 사진처럼 핑크 */
+  --inner-bg: #ffffff;      /* 프레임 배경색 */
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--outer-bg);  /* 빈공간 대신 배경으로 채움 */
+  overflow-x: hidden;           /* 가로 스크롤 방지 */
+}
+
+/* 바깥 컨테이너: 화면 꽉 채움 */
+.app-shell{
+  min-height: 100dvh;           /* 주소창 높이변동 대응 */
+  width: 100%;
+  display: flex;
+  justify-content: center;       /* 기본: 가운데 정렬 */
+  background: var(--outer-bg);   /* 양옆 배경 */
+}
+
+/* 프레임: 가이드 폭 */
+.frame{
+  width: var(--frame-w);         /* 데스크탑/넓은 화면: 412px 고정 */
+  margin: 0 auto;               /* 가운데 정렬 */
+  min-height: 100dvh;
+  background: var(--inner-bg);
+  padding-left: var(--gutter-x);
+  padding-right: var(--gutter-x);
+}
+
+/* 프레임 내부 요소는 프레임 너비 넘지 않게 */
+.frame * { max-width: 100%; }
+
+/* ★ 모바일(<=412px)에서는 프레임이 화면을 꽉 채우도록 */
+@media (max-width: 412px){
+  .frame{
+    width: 100vw;                /* 프레임 = 화면폭 */
+    padding-left: var(--gutter-x);
+    padding-right: var(--gutter-x);
+  }
+}

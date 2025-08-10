@@ -1,0 +1,176 @@
+:root{
+  --app-width: 412px;
+  --gutter-x: 19px;
+  --bg-hero:#EAF1FF;
+  --bg:#F5F7FB;
+  --card:#FFFFFF;
+  --text:#111827;
+  --muted:#6B7280;
+  --line:#E9ECF3;
+  --violet:#5B5BEF;
+
+  /* ★ 추가: 탭바 높이 */
+  --tabbar-h: 84px;
+}
+
+/* 프레임(.frame) 안에서만 동작하도록: 폭은 프레임 100% 사용 */
+.home-app{
+  min-height:100vh;
+  background:var(--bg);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display:flex;
+  flex-direction:column;
+  position: static;
+}
+/* =========== 상단 히어로 영역 =========== */
+.hero{
+  background: #FFFFFF;
+  padding: 10px var(--gutter-x) 14px;  /* 좌우 19px */
+}
+
+/* 헤더 */
+.home-header{
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  height: 64px;
+}
+.brand-mark{
+  width:44px; height:44px; border-radius:12px;
+  background:#dfe9ff; display:grid; place-items:center;
+}
+.brand-center{ text-align:center }
+.brand-name{ font-size:24px; font-weight:700; color:#111; line-height:1.1 }
+.brand-sub{ font-size:14px; color:#111; margin-top:2px }
+
+/* 인사 카드 */
+.hello-card{
+  margin-top:10px;
+  display:flex; align-items:center; gap:18px;
+  background:#EAF1FF; padding:14px; border-radius:12px;
+  border:1px solid #E6EBFF; box-shadow:0 1px 1px rgba(0,0,0,.02);
+}
+.hello-icon{
+  width:46px; height:46px; border-radius:10px;
+  display:grid; place-items:center; background:#F3F6FF; font-size:24px;
+}
+.hello-text h2{ font-size:20px; font-weight:600; color:#222 }
+.hello-text p{ font-size:13px; font-weight:500; color:#222; margin-top:4px }
+
+/* 본문이 탭바에 가려지지 않도록 하단 여백을 탭바 높이에 맞춤 */
+.home-body{
+  background:#f6f8fb;
+  padding: 16px var(--gutter-x) calc(var(--tabbar-h) + 12px);
+}
+
+
+/* 섹션 타이틀 */
+.section-title{
+  text-align:center;
+  font-size:18px;
+  font-weight:700;
+  color:#1f2430;
+  margin:24px 0;
+}
+
+/* 기능 리스트 */
+.feature-list{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.feature-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  background:#fff;
+  border:1px solid #F0F2F7;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+  text-align:left;
+  cursor:pointer;
+}
+.feature-icon{
+  width:38px; height:38px; border-radius:10px;
+  background:#F3F5FA; display:grid; place-items:center; color:#333;
+}
+
+.feature-line{ display:flex; align-items:center; gap:6px; flex:1; }
+.feature-title{ font-weight:800; color:#1a1f2b; font-size:14px; white-space:nowrap; }
+.feature-desc{ margin-top:4px; font-size:12px; color:#6E7686; line-height:1.35; }
+.feature-desc-inline{
+  font-size:12px; color:#6E7686; overflow:hidden; text-overflow:ellipsis;
+  display:-webkit-box; -webkit-box-orient:vertical; white-space:normal; line-height:1.4;
+}
+.feature-text{ flex:1; }
+.feature-item > svg:last-child{ width:16px; height:16px }
+
+/* 본문이 탭바에 가려지지 않도록 */
+.home-body{
+  padding-bottom: calc(var(--tabbar-h) + 12px);
+}
+
+/* 1) 바깥은 투명: 배경/보더/그림자 제거 */
+.home-tabbar{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--tabbar-h);
+  background: transparent;          /* ← 변경 */
+  border-top: none;                 /* ← 변경 */
+  box-shadow: none;                 /* ← 변경 */
+  z-index: 40;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* 안쪽 래퍼만 412px로 중앙 고정 */
+.home-tabbar__inner{
+  width: var(--app-width);
+  height: 100%;
+    /* 왼쪽 정렬 */
+  margin-left: 0;
+  margin-right: auto;
+
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+    /* 탭바 스타일은 여기로 */
+  background: #fff;
+  border-top: 1px solid #EAEAF4;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.04);
+}
+
+/* 아이템 */
+.home-tabbar .tab{
+  flex: 0 0 auto;
+  min-width: 72px;
+  height: calc(var(--tabbar-h) - env(safe-area-inset-bottom, 0));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: #9AA1AC;
+}
+.home-tabbar .tab .ti svg{ width:28px; height:28px; display:block; stroke: currentColor; }
+.home-tabbar .tab .tl{ font-size:14px; line-height:1; }
+.home-tabbar .tab.active{ color: var(--violet); font-weight:800; }
+
+/* 모바일(<=412px): 화면 가득 가운데 정렬 */
+@media (max-width: 412px){
+  .home-tabbar__inner{
+    width: 100vw;
+    margin-left: 0;      /* 오프셋 제거 */
+  }
+}

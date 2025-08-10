@@ -1,0 +1,150 @@
+:root{
+  --bg:#eef3ff;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --primary:#4F46E5; /* 회원가입 버튼 */
+  --violet:#5B5BEF;  /* "시니어 취업 플랫폼" */
+  --line:#e5e7eb;
+  --soft:#e9ecf2;
+}
+
+.rf-page{
+  min-height:100vh;
+  background:var(--bg);
+}
+
+.rf-wrap{
+  max-width:360px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:24px 14px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* 로고 */
+.rf-logo-card{
+  width:max-content;
+  margin:0 auto;
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.rf-logo-grad{
+  width:64px;height:64px;
+  margin:12px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#6ea8ff 0%, #7ef1e5 100%);
+  display:grid;place-items:center;
+}
+.rf-emoji{ font-size:28px; }
+
+/* 타이틀 */
+.rf-title{ text-align:center; margin-top:12px; }
+.rf-title h1{
+  font-size:45px; line-height:1.2;
+  font-weight:700; color:var(--text);
+}
+.rf-sub1{ margin-top:4px; font-size:20px; font-weight:500; line-height:18px; color:#374151; }
+.rf-sub2{ font-size:20px; line-height:50px; font-weight:800; color:var(--violet); }
+
+/* 포인트 라인 */
+.rf-points{
+  margin-top:16px;
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; white-space:nowrap; font-size:15px;
+}
+.rf-point{ display:flex; align-items:center; gap:6px; color:#374151; }
+.rf-icon{ vertical-align:middle; }
+
+/* 카드 */
+.rf-card{
+  margin-top:20px;
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  padding:16px;
+}
+
+/* 카드 타이틀 */
+.rf-card-title{
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:1px;
+}
+.rf-card-title h2{
+  font-size:24px; font-weight:700; color:var(--text);
+}
+.rf-badge{
+  width:20px;height:20px; border-radius:50%;
+  display:grid;place-items:center;
+  background:#ecfdf5; color:#059669;
+}
+.rf-card-sub{ text-align:center; color:#6b7280; font-size:15px; margin-bottom:12px; }
+
+/* 탭 */
+.rf-tabs{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.rf-tab{
+  padding:10px 0; border:1px solid var(--line);
+  border-radius:12px; background:#fff; color:#374151;
+  font-size:17px; font-weight:600;
+}
+.rf-tab[disabled]{ color:#9ca3af; background:#fff; }
+.rf-tab.is-active{
+  border-color:#9ec2ff; background:#eaf1ff; color:#2a62ff; font-weight:700;
+}
+
+/* 폼 */
+.rf-form{ display:flex; flex-direction:column; gap:12px; }
+
+.rf-field label{
+  display:block; margin-bottom:6px; font-size:15px; color:#374151; font-weight:600;
+}
+.rf-input{
+  width:100%; border:1px solid var(--line); background:#fff;
+  border-radius:12px; padding:10px 12px;
+  font-size:15px; font-weight:700; color:#111827; outline:none;
+}
+.rf-input:focus{ border-color:#7aa8ff; }
+.rf-input.rf-error{ border-color:#f87171; }
+.rf-help-err{ margin-top:4px; font-size:10px; color:#ef4444; }
+
+/* 버튼 */
+.rf-btn{
+  width:100%; border:0; border-radius:12px; padding:12px 0;
+  font-size:16px; font-weight:700; cursor:pointer;
+  transition:filter .12s ease;
+}
+.rf-btn:disabled{ cursor:not-allowed; opacity:.9; }
+
+.rf-btn-gray{ background:var(--soft); color:#8a93a2; }
+.rf-btn-gray:hover{ filter:brightness(.97); }
+.rf-btn-gray.is-disabled{ color:#b6bdc9; }
+
+.rf-divider{
+  display:flex; align-items:center; gap:8px;
+  color:#9ca3af; margin:16px 0; font-size:12px;
+}
+.rf-divider::before,.rf-divider::after{
+  content:""; flex:1; height:1px; background:#e5e7eb;
+}
+
+.rf-btn-kakao{
+  background:#FEE500; color:#000;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.rf-k-badge{
+  width:24px; height:24px; border-radius:10px;
+  background:#000; color:#fff; display:grid; place-items:center; font-size:13px;
+}
+
+.rf-center-txt{ margin-top:20px;  margin-bottom: 20px; text-align:center; color:#6b7280; font-size:15px; }
+
+.rf-btn-primary{ background:var(--primary); color:#fff; }
+.rf-btn-primary:hover{ filter:brightness(.96); }
+
+/* 푸터 */
+.rf-footer{
+  margin-top:16px; text-align:center; color:#6b7280; font-size:10px; line-height:1.6; 
+}
+.rf-footer .rf-links{ margin-top:6px;}
+.rf-footer a{ color:#2563eb; text-decoration:underline; margin: 0 12px;}

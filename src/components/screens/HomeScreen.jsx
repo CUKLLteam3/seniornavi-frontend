@@ -1,115 +1,236 @@
 import React from "react";
-import { FaUser, FaBriefcase, FaGraduationCap, FaRobot, FaClipboardList } from "react-icons/fa";
-import { HiOutlineArrowRight } from "react-icons/hi";
+import "./home.css";
 
-const HomeScreen = ({ user, onNavigate }) => {
+export default function HomeScreen({ user, onNavigate }) {
+  const name = user?.name || "사용자님";
+
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-      {/* 헤더 */}
-      <div className="bg-white p-4 rounded-xl shadow flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center">
-            <span className="text-white text-2xl">🐧</span>
+    <div className="home-app">
+      {/* 상단 히어로(파랑 배경) */}
+      <div className="hero">
+        {/* 헤더: 중앙 정렬, 알림 제거 */}
+        <header className="home-header">
+          <div className="brand-mark">🧰</div>
+          <div className="brand-center">
+            <div className="brand-name">Re-fly</div>
+            <div className="brand-sub">새로운 시작을 위한 플랫폼</div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">Re-fly</h1>
-            <p className="text-sm text-gray-500">새로운 시작을 위한 플랫폼</p>
+          <div className="brand-right" /> {/* 자릿수 맞춤용 빈칸 */}
+        </header>
+
+        {/* 인사 카드 (흰 박스) */}
+        <section className="hello-card">
+          <div className="hello-icon">🐧</div>
+          <div className="hello-text">
+            <h2>안녕하세요, {name}님!</h2>
+            <p>오늘도 새로운 기회를 찾아보세요</p>
           </div>
+        </section>
+      </div>
+
+      {/* 본문(여기부터 흰 배경) */}
+      <main className="home-body">
+        <h3 className="section-title">무엇을 도와드릴까요?</h3>
+
+        <nav className="feature-list">
+          <FeatureItem
+            icon={<ChatIcon />}
+            title="AI 코치 상담"
+            desc="맞춤형 취업 전략을 받아보세요"
+            onClick={() => onNavigate?.("ai")}
+          />
+          <FeatureItem
+            icon={<BagIcon />}
+            title="일자리 찾기"
+            desc="나에게 맞는 일자리를 추천받아보세요"
+            onClick={() => onNavigate?.("jobs")}
+          />
+          <FeatureItem
+            icon={<ProfileIcon />}
+            title="이력 등록하기"
+            desc="맞춤형 취업 전략을 받아보세요"
+            onClick={() => onNavigate?.("resume")}
+          />
+          <FeatureItem
+            icon={<HatIcon />}
+            title="교육 프로그램"
+            desc="새로운 기술을 배워보세요"
+            onClick={() => onNavigate?.("training")}
+          />
+        </nav>
+      </main>
+
+      {/* 하단 탭 (아이콘 + 라벨) */}
+      <footer className="home-tabbar">
+         <div className="home-tabbar__inner">
+        {[
+          {
+            key: "home",
+            label: "홈",
+            icon: (
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 10.5 12 3l9 7.5v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ),
+          },
+          {
+            key: "bag",
+            label: "일자리",
+            icon: (
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M6 7h12a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="M9 7V5a3 3 0 0 1 6 0v2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
+            ),
+          },
+          {
+            key: "book",
+            label: "교육",
+            icon: (
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 5h10a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3V5z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="M17 8h3v11h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
+            ),
+          },
+          {
+            key: "chat",
+            label: "AI",
+            icon: (
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 13a7 7 0 1 1 4.7 6.6L4 21l1.5-3.2A6.9 6.9 0 0 1 4 13z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ),
+          },
+          {
+            key: "user",
+            label: "내정보",
+            icon: (
+              <svg viewBox="0 0 24 24">
+                <circle
+                  cx="12"
+                  cy="8"
+                  r="3.2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="M5 19a7 7 0 0 1 14 0"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              </svg>
+            ),
+          },
+        ].map((t, i) => (
+          <button key={t.key} className={"tab" + (i === 0 ? " active" : "")}>
+            <span className="ti">{t.icon}</span>
+            <span className="tl">{t.label}</span>
+          </button>
+        ))}
         </div>
-        <button className="w-10 h-10 rounded-full border flex items-center justify-center text-lg">⌨️</button>
-      </div>
-
-      {/* 사용자 인사 */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4 flex items-center space-x-3">
-        <span className="text-2xl">🐧</span>
-        <div>
-          <p className="font-bold">안녕하세요, {user.name}님! 👋</p>
-          <p className="text-sm text-gray-600">오늘도 새로운 기회를 찾아보세요</p>
-        </div>
-      </div>
-
-      {/* 기능 카드 */}
-      <div className="space-y-3 mb-6">
-        <Card icon={<FaBriefcase />} title="일자리 찾기" subtitle="나에게 맞는 일자리를 추천받아보세요" onClick={() => onNavigate("job-search")} />
-        <Card icon={<FaGraduationCap />} title="교육 프로그램" subtitle="새로운 기술을 배워보세요" onClick={() => onNavigate("education")} orange />
-        <Card icon={<FaClipboardList />} title="이력 등록하기" subtitle="3분 간단 설문으로 맞춤 일자리를 찾아보세요" onClick={() => onNavigate("resume")} blue />
-        <Card icon={<FaRobot />} title="AI 코치 상담" subtitle="맞춤형 취업 전략을 받아보세요" onClick={() => onNavigate("ai-coach")} purple />
-      </div>
-
-      {/* 추천 일자리 */}
-      <SectionHeader title="추천 일자리" />
-      <div className="space-y-3 mb-6">
-        <JobCard title="아파트 관리사무소 접수원 모집" company="○○아파트 관리사무소" location="서울특별시 강남구" type="정규직" salary="2,000,000원" />
-        <JobCard title="마트 계산원 및 고객응대 직원" company="△△마트" location="서울특별시 마포구" type="파트타임" salary="10,000원" />
-      </div>
-
-      {/* 추천 교육과정 */}
-      <SectionHeader title="추천 교육과정" />
-      <div className="space-y-3 mb-6">
-        <EduCard title="시니어를 위한 스마트폰 기초 활용" org="○○평생학습관" tag="만 50세 이상" type="일반과정" isFree />
-        <EduCard title="건강한 한식요리 교실" org="△△문화센터" tag="요리에 관심있는 시니어" type="일반과정" isFree />
-      </div>
-
-      <button className="w-full py-3 bg-purple-600 text-white font-semibold rounded-xl">+ 더 많은 일자리 보기</button>
+      </footer>
     </div>
   );
-};
+}
 
-const Card = ({ icon, title, subtitle, onClick, orange, blue, purple }) => {
-  let bgColor = "bg-blue-100 text-blue-700";
-  if (orange) bgColor = "bg-orange-100 text-orange-700";
-  if (blue) bgColor = "bg-indigo-100 text-indigo-700";
-  if (purple) bgColor = "bg-purple-100 text-purple-700";
-
+/* --------- 소품들 --------- */
+function FeatureItem({ icon, title, desc, onClick }) {
   return (
-    <div
-      className="bg-white rounded-xl shadow p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50"
-      onClick={onClick}
+    <button className="feature-item" onClick={onClick}>
+      <div className="feature-icon">{icon}</div>
+
+      {/* 제목과 설명을 한 줄에 */}
+      <div className="feature-line">
+        <span className="feature-title">{title}</span>
+        <span className="feature-desc-inline">{desc}</span>
+      </div>
+
+      <ChevronRight />
+    </button>
+  );
+}
+
+/* --------- 아이콘 --------- */
+function ChevronRight() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="#A6AAB4"
+      strokeWidth="2"
     >
-      <div className="flex items-center space-x-4">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl ${bgColor}`}>{icon}</div>
-        <div>
-          <h3 className="font-semibold text-lg">{title}</h3>
-          <p className="text-sm text-gray-500">{subtitle}</p>
-        </div>
-      </div>
-      <HiOutlineArrowRight className="text-gray-400" size={20} />
-    </div>
+      <path d="M9 6l6 6-6 6" />
+    </svg>
   );
-};
-
-const SectionHeader = ({ title }) => (
-  <div className="flex items-center justify-between mb-2">
-    <h2 className="text-lg font-bold">{title}</h2>
-    <button className="text-sm text-purple-600 font-medium border border-purple-600 px-3 py-1 rounded-full">전체보기 →</button>
-  </div>
-);
-
-const JobCard = ({ title, company, location, type, salary }) => (
-  <div className="bg-white rounded-xl shadow p-4">
-    <h3 className="font-semibold text-base mb-1">{title}</h3>
-    <p className="text-sm text-gray-600 mb-2">{company}</p>
-    <div className="flex text-sm text-gray-500 space-x-3 mb-2">
-      <span>📍 {location}</span>
-      <span>💼 {type}</span>
-    </div>
-    <p className="text-indigo-600 font-bold">{salary}</p>
-  </div>
-);
-
-const EduCard = ({ title, org, tag, type, isFree }) => (
-  <div className="bg-white rounded-xl shadow p-4">
-    <h3 className="font-semibold text-base mb-1">{title}</h3>
-    <p className="text-sm text-gray-600 mb-2">{org}</p>
-    <div className="flex items-center text-sm text-gray-500 space-x-3 mb-2">
-      <span>📅 {tag}</span>
-      <span>👤 {type}</span>
-    </div>
-    <div className="flex justify-between items-center">
-      <span className="text-green-600 font-semibold">✔ 수강 신청 가능</span>
-      {isFree && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">무료</span>}
-    </div>
-  </div>
-);
-
-export default HomeScreen;
+}
+function ChatIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5B5BEF" strokeWidth="2">
+      <path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+function BagIcon({ stroke = "#7C3AED" }) {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke={stroke} strokeWidth="2">
+      <path d="M6 7h12l1 14H5L6 7z" />
+      <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+    </svg>
+  );
+}
+function ProfileIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#574AE2" strokeWidth="2">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c2-4 14-4 16 0" />
+    </svg>
+  );
+}
+function HatIcon({ stroke = "#F59E0B" }) {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke={stroke} strokeWidth="2">
+      <path d="M22 10L12 6 2 10l10 4 10-4z" />
+      <path d="M6 12v5a6 6 0 0 0 12 0v-5" />
+    </svg>
+  );
+}

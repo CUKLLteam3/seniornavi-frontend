@@ -1,0 +1,141 @@
+:root{
+  --app-width: 412px;           /* 프레임 */
+  --pad-x: 26px;                 /* 좌/우 안쪽 여백 (디자인 26) */
+  --gap-q-a: 20px;               /* 질문 ↔ 답변 간격 */
+  --gap-q-q: 25px;               /* 질문 ↔ 다음 질문 간격 */
+  --section-bottom: 35px;        /* 섹션 흰색 영역 끝 하단 여백 */
+  --gap-btn-tab: 39px;           /* 이전 버튼 ↔ 탭바 간격 */
+  --tabbar-h: 84px;              /* ★ 탭바 높이 (스펙 84) */
+  --violet:#2F4B99;              /* 메인 보라 */
+  --line:#E9ECF3;
+}
+
+/* 바깥 배경 */
+html, body { margin:0; background:#ffdede; overflow-x:hidden; }
+
+/* 프레임: 항상 중앙 */
+.survey-app{
+  width: var(--app-width);
+  max-width: var(--app-width);
+  min-height: 100vh;
+  background:#fff;
+
+  position: relative;
+  left:50%;
+  transform: translateX(-50%);
+
+  /* ★ 탭바 높이와 버튼-탭 간격을 합쳐 본문이 가려지지 않게 */
+  padding-bottom: calc(var(--tabbar-h) + var(--gap-btn-tab));
+}
+
+/* 헤더 */
+.sv-header{
+  position: sticky; top: 0; z-index: 5;
+  background:#fff;
+  padding: 12px var(--pad-x) 8px;
+  border-bottom: 1px solid var(--line);
+}
+.icon-btn{ background:transparent; border:0; position:absolute; left:12px; top:12px; font-size:18px; cursor:pointer; }
+.sv-step{ text-align:center; font-weight:800; }
+.sv-progress{ height:6px; background:#F0F2F7; border-radius:999px; overflow:hidden; margin-top:8px; }
+.sv-progress .bar{ height:100%; background:var(--violet); width:0; }
+.sv-pct{ font-size:12px; color:#666; margin-top:6px; text-align:right; }
+
+/* 본문 */
+.sv-body{ padding-top: 12px; }
+.sv-section{ padding: 0 var(--pad-x) var(--section-bottom); }
+.sv-title{
+  margin: 24px 0 16px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--violet);          /* ★ 변수로 통일 */
+}
+
+/* 필드 블록 */
+.sv-fields{ display:flex; flex-direction:column; gap: var(--gap-q-q); }
+
+.field .fl{
+  display:block;
+  font-size: 14px;
+  font-weight: 700;
+  color:#111;
+  margin-bottom: var(--gap-q-a); /* 질문 ↔ 답변 20 */
+}
+.inp{
+  width:100%; height:44px; padding:0 12px;
+  border:1px solid #E5E7EB; border-radius:10px;
+  background:#fff; outline:none;
+  font-size:14px;
+}
+.radios{ display:flex; flex-direction:column; gap:12px; }
+.radio{ display:flex; align-items:center; gap:8px; font-size:14px; }
+
+.chips{ display:flex; flex-wrap:wrap; gap:10px; }
+.chip{
+  padding:10px 12px; border-radius:12px;
+  border:1px solid #E5E7EB; background:#fff; cursor:pointer;
+  font-size:14px;
+}
+.chip.active{ border-color:var(--violet); color:var(--violet); background:#F7F7FF; }
+
+/* 섹션 내부 버튼 (다음 → 이전) */
+.sv-actions{ margin-top: 12px; }
+.btn{
+  height:44px; border-radius:10px; padding:0 16px;
+  border:1px solid #E5E7EB; background:#fff; cursor:pointer; font-weight:600;
+}
+.btn.primary{ background:var(--violet); border-color:var(--violet); color:#fff; }
+.btn.ghost{ background:#fff; }
+.btn.w100{ width:100%; }
+.sv-actions .btn + .btn{ margin-top: 12px; }
+
+/* 탭바(목업) — 가로 412, 높이 84 */
+.sv-tabbar{
+  position: fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: 0;
+  width: var(--app-width);
+  height: var(--tabbar-h);      /* ★ 84px */
+  background:#fff;
+  border-top:1px solid #EAEAF4;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.04);
+  display:flex;
+  justify-content: space-around; /* 아이템 균등 배치 */
+  align-items:center;
+
+  /* iOS 안전영역 */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* 탭 아이템(아이콘+라벨 대비 여유) — 텍스트만 있어도 동작 */
+.sv-tabbar .tab{
+  flex: 0 0 auto;
+  min-width: 72px;
+  height: calc(var(--tabbar-h) - env(safe-area-inset-bottom, 0));
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:0;
+  background:transparent;
+  color:#9AA1AC;
+}
+.sv-tabbar .tab .ti svg{ width:28px; height:28px; display:block; stroke: currentColor; }
+.sv-tabbar .tab .tl{ font-size:14px; line-height:1; }
+.sv-tabbar .tab.active{ color:var(--violet); font-weight:800; }
+
+/* 완료 카드 */
+.done-card{ padding: 12px var(--pad-x) 20px; }
+.done-title{ font-size:18px; font-weight:800; margin:6px 0; }
+.done-desc{ color:#666; font-size:13px; }
+.done-actions{ display:flex; flex-direction:column; gap:12px; margin:12px 0 10px; }
+.sum{ list-style:none; padding:0; margin:12px 0 0; border-top:1px dashed #eee; }
+.sum li{ display:flex; justify-content:space-between; padding:6px 0; font-size:13px; }
+
+/* 모바일(<=412px): 화면 꽉 채움 */
+@media (max-width: 412px){
+  .survey-app{ width:100vw; max-width:100vw; left:0; transform:none; }
+  .sv-tabbar{ width:100vw; left:0; transform:none; }
+}
