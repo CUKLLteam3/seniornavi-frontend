@@ -1,0 +1,122 @@
+/* 전체 컨테이너 */
+.mypg{
+  padding: 12px 16px 96px; /* 하단 탭바(84)+여유 */
+  background: transparent;
+}
+
+/* 헤더 */
+.mypg__hdr{ padding: 4px 2px 8px; }
+.mypg__hint{ font-size: 15px; color:#8A8F99; }
+.mypg__title{ font-size: 22px; font-weight:700; margin-top: 2px; }
+
+/* 상단 2-탭(채움) */
+.mypg__seg{
+  display:flex; gap:8px;
+  background:#F4F1FF;
+  padding:8px;
+  border-radius:12px;
+  margin:8px 0 12px;
+}
+.seg__btn{
+  flex:1; height:36px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  border-radius:10px; border:0; cursor:pointer;
+  background:transparent; color:#6F56F7; font-weight:700; font-size:13px;
+}
+.seg__btn svg{ width:16px; height:16px; }
+.seg__btn.is-active{ background:#6F56F7; color:#fff; }
+
+/* 리스트 카드 */
+.mypg__card.list{
+  background:#fff; border:1px solid #E8E6FF; border-radius:16px;
+  padding:10px 12px; margin-bottom:14px;
+}
+.row{ display:flex; align-items:center; padding:10px 2px; }
+.row__ic{ color:#6F56F7; margin-right:8px; display:flex; }
+.row__title{ font-size:14px; }
+.row__sub{ font-size:12px; color:#7E8491; margin-top:2px; }
+.divline{ height:1px; background:#EEEFF4; margin:0; }
+.divline.light{ background:#F3F4F6; }
+
+/* 중단 외곽선 탭 */
+.mypg__seg-ol{
+  display:flex; gap:8px; margin:4px 0 10px;
+}
+.segol__btn{
+  flex:1; height:40px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  background:#fff; border:1px solid #D8DBE5; color:#21242A;
+  font-weight:700; cursor:pointer;
+}
+.segol__btn.is-active{
+  background:#6F56F7; color:#fff; border-color:#6F56F7;
+}
+.segol__btn svg{ width:16px; height:16px; }
+
+/* 패널(박스) */
+.mypg__panel{
+  background:#fff; border:1px solid #EBE8FF; border-radius:16px;
+  padding:10px; margin-bottom:12px;
+}
+.panel__cap{
+  display:flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:700; color:#202226; margin-bottom:8px;
+}
+.panel__cap .muted{ margin-left:6px; color:#8B90A0; font-weight:400; }
+
+/* 카드(관심/지원 목록) */
+.card{
+  border:1.4px solid #CFC8FF;
+  border-radius:12px;
+  background:#fff;
+  padding:10px 10px;
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:8px; margin-bottom:8px;
+}
+.card__title{ font-size:13px; font-weight:700; margin-bottom:2px; }
+.card__sub1{ font-size:12px; color:#5C5F6B; }
+.card__sub2{ font-size:12px; color:#6F56F7; margin-top:2px; }
+
+/* '보기' 버튼 */
+.btn-ghost.sm{
+  height:26px; padding:0 10px; font-size:12px;
+  border:1.2px solid #CFC8FF; border-radius:8px; background:#fff; color:#4E41D9;
+}
+
+/* 배지(신청중/완료) */
+.badge{
+  height:24px; padding:0 10px; display:inline-flex; align-items:center;
+  border:1.2px solid #CFC8FF; border-radius:8px; color:#4E41D9; font-size:12px;
+}
+
+/* 알림 스위치 */
+.switchrow{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 2px;
+}
+.sw{ position:relative; width:46px; height:26px; display:inline-block; }
+.sw__inp{ display:none; }
+.sw__bar{
+  position:absolute; inset:0; background:#EEEFF5; border-radius:999px;
+  border:1px solid #E1E2EA;
+}
+.sw__bar i{
+  position:absolute; top:50%; left:4px; transform:translateY(-50%);
+  width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.1);
+}
+.sw__inp:checked + .sw__bar{ background:#EAE6FF; border-color:#CFC8FF; }
+.sw__inp:checked + .sw__bar i{ left:24px; background:#6F56F7; }
+
+/* 로그아웃 버튼 */
+.mypg__logout {
+  width: 100%;
+  height: 40px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1.4px solid #fc1313; 
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 타이포/보정 */
+.subhead{ font-size:12px; font-weight:700; margin:8px 2px 6px; color:#2A2E37; }

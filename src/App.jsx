@@ -1,34 +1,40 @@
 // src/App.jsx
 import React, { useEffect, useState } from "react";
+
 import LoginScreen from "./components/screens/LoginScreen.jsx";
 import SignupScreen from "./components/screens/SignupScreen.jsx";
 import HomeScreen from "./components/screens/HomeScreen.jsx";
 import ResumeScreen from "./components/screens/Resume.jsx";
-import { VoiceGuide } from "./components/layout/VoiceGuide.jsx";
-import SurveyWizard from "./components/screens/SurveyWizard.jsx"; 
+import SurveyWizard from "./components/screens/SurveyWizard.jsx";
+import MyPage from "./components/screens/MyPage.jsx";
+
+import BottomTabBar from "./components/layout/BottomNavigation.jsx"; // ✅ 공용 탭바
 
 // 전역 스타일
 import "./styles/globals.css";
-// ★ 공통 프레임(412px) 고정 레이아웃
 import "./styles/layout.css";
 
 export default function App() {
-  // 개발 중: 무조건 로그인부터 시작
+  // 개발 중: 로그인부터 시작
   const [currentPage, setCurrentPage] = useState("login");
 
+  // 로그인 유저 캐시
   const [currentUser, setCurrentUser] = useState(() => {
     const raw = localStorage.getItem("user");
     return raw ? JSON.parse(raw) : null;
   });
 
-  // 토큰/유저 값 캐싱
-  const token = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
-
+  // 페이지 전환 시 스크롤 상단으로
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
+  // 화면 전환 핸들러
+  const handleNavigate = (screen) => {
+    setCurrentPage(screen);
+  };
+
+  // 로그인 완료
   const handleLogin = (data) => {
     const user = { name: "홍길동", phone: data?.phone ?? null };
     localStorage.setItem("token", "fake-token");
@@ -37,34 +43,44 @@ export default function App() {
     setCurrentPage("home");
   };
 
-  const handleSignup = () => setCurrentPage("signup");
-  const handleBackToLogin = () => setCurrentPage("login");
+  // 로그아웃
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setCurrentUser(null);
     setCurrentPage("login");
   };
-  const handleNavigate = (screen) => setCurrentPage(screen);
 
-  // 홈 진입 가드
+  const handleSignup = () => setCurrentPage("signup");
+  const handleBackToLogin = () => setCurrentPage("login");
+
+  // 인증 가드: 보호 화면은 토큰/유저 없으면 로그인으로
   useEffect(() => {
-    if (currentPage === "home") {
-      if (!token || !storedUser) {
-        setCurrentPage("login");
-        return;
-      }
-      if (!currentUser) setCurrentUser(JSON.parse(storedUser));
+    const protectedPages = ["home", "mypage", "resume", "survey"];
+    if (!protectedPages.includes(currentPage)) return;
+
+    const t = localStorage.getItem("token");
+    const u = localStorage.getItem("user");
+    if (!t || !u) {
+      setCurrentPage("login");
+      return;
     }
-  }, [currentPage, currentUser, token, storedUser]);
+    if (!currentUser) {
+      try {
+        setCurrentUser(JSON.parse(u));
+      } catch {
+        setCurrentPage("login");
+      }
+    }
+  }, [currentPage, currentUser]);
+
+  // 탭바가 보여질 화면만 지정 (로그인/회원가입에는 X)
+  const tabPages = new Set(["home", "mypage","resume","survey"]);
 
   return (
-    // ★ 모든 화면을 412px 프레임으로 감싸기
     <div className="app-shell">
       <main className="frame">
-        <VoiceGuide />
-
-        {/* 개발 편의: 한 번 클릭으로 초기화 (뷰포트 기준 fixed라 프레임 밖에 떠도 OK) */}
+        {/* 개발 편의: 로컬스토리지 초기화 */}
         <ResetLocalStorage
           onReset={() => {
             localStorage.clear();
@@ -73,6 +89,7 @@ export default function App() {
           }}
         />
 
+        {/* ===== 화면 렌더링 ===== */}
         {currentPage === "login" && (
           <LoginScreen
             onLogin={handleLogin}
@@ -81,43 +98,73 @@ export default function App() {
           />
         )}
 
-        {currentPage === "signup" && <SignupScreen onBack={handleBackToLogin} />}
+        {currentPage === "signup" && (
+          <SignupScreen onBack={handleBackToLogin} />
+        )}
 
-        {/* 렌더 가드: 토큰+유저가 있을 때만 홈 렌더 */}
-        {currentPage === "home" && token && storedUser && (
+        {currentPage === "home" && (
           <HomeScreen
-            user={currentUser || JSON.parse(storedUser)}
+            user={
+              currentUser ||
+              (localStorage.getItem("user")
+                ? JSON.parse(localStorage.getItem("user"))
+                : null)
+            }
             onNavigate={handleNavigate}
             onLogout={handleLogout}
           />
         )}
 
-        {currentPage === "resume" && (
-          <ResumeScreen
-            onNavigate={handleNavigate}
-            onStart={() => alert("설문 시작!")}
-          />
+        {currentPage === "mypage" && (
+          <MyPage onLogout={handleLogout} />
         )}
 
         {currentPage === "resume" && (
           <ResumeScreen
             onNavigate={handleNavigate}
-            onStart={() => setCurrentPage("survey")}   // ★ 설문 진입
+            onStart={() => setCurrentPage("survey")}
           />
         )}
 
         {currentPage === "survey" && (
           <SurveyWizard
-            onDone={() => setCurrentPage("home")}      // 완료 후 홈으로
+            onDone={() => setCurrentPage("home")}
             onBackHome={() => setCurrentPage("home")}
           />
+        )}
+
+        {/* ===== 공용 하단 탭바 (로그인/회원가입 외 화면에서만) ===== */}
+        {tabPages.has(currentPage) && (
+          <BottomTabBar
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+          />
+        )}
+
+        {/* 개발용 디버그 뱃지 */}
+        {import.meta.env.DEV && (
+          <div
+            style={{
+              position: "fixed",
+              right: 8,
+              top: 8,
+              zIndex: 9999,
+              background: "#000",
+              color: "#fff",
+              padding: "4px 8px",
+              borderRadius: 6,
+              fontSize: 12,
+            }}
+          >
+            page: {currentPage}
+          </div>
         )}
       </main>
     </div>
   );
 }
 
-/* 개발 편의용: 로컬스토리지 초기화 버튼 (임시) */
+/* 개발 편의용: 로컬스토리지 초기화 버튼 */
 function ResetLocalStorage({ onReset }) {
   return (
     <button

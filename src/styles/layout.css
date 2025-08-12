@@ -6,7 +6,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body {
+html, body, #root {
   margin: 0;
   height: 100%;
   background: var(--outer-bg);  /* 빈공간 대신 배경으로 채움 */
@@ -15,7 +15,7 @@ html, body {
 
 /* 바깥 컨테이너: 화면 꽉 채움 */
 .app-shell{
-  min-height: 100dvh;           /* 주소창 높이변동 대응 */
+  min-height: 100%;           /* 주소창 높이변동 대응 */
   width: 100%;
   display: flex;
   justify-content: center;       /* 기본: 가운데 정렬 */
@@ -30,6 +30,10 @@ html, body {
   background: var(--inner-bg);
   padding-left: var(--gutter-x);
   padding-right: var(--gutter-x);
+  overflow-y: auto;                /* 스크롤 여기서 발생 */
+  overscroll-behavior-y: contain;  /* 상단/하단 바운스 억제(선택) */
+  -webkit-overflow-scrolling: touch;
+
 }
 
 /* 프레임 내부 요소는 프레임 너비 넘지 않게 */
