@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../ui/Button';
 import { SCREENS } from '../../constants/screens';
+import './JobTraining.css';
 
-export const JobListScreen = ({
-  onNavigate,
-  onBack,
-  onApply,
-}) => {
+export const JobListScreen = ({ onNavigate, onApply }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
@@ -21,7 +17,7 @@ export const JobListScreen = ({
           title: '부천시청 민원도우미',
           company: '부천시청',
           location: '부천시 원미구',
-          salary: '시급 12,000원',
+          salary: '12,000원 (시급)',
           type: '시간제',
           description: '시민들의 민원 접수 및 안내 업무',
           workingHours: '09:00-13:00',
@@ -62,7 +58,7 @@ export const JobListScreen = ({
 
   if (loading) {
     return (
-      <div className="page">
+      <div className="pg">
         <div className="text-center py-8">
           <div className="text-4xl mb-4">⏳</div>
           <p>일자리 목록을 불러오는 중...</p>
@@ -72,68 +68,100 @@ export const JobListScreen = ({
   }
 
   return (
-    <div className="page">
-      <h1 className="text-2xl font-bold text-primary-600 mb-4">
-        일자리 찾기
-      </h1>
+    <div className="pg">
 
       {/* 검색 */}
-      <div className="mb-4 gap-2 flex">
-        <input
-          type="text"
-          placeholder="일자리나 회사명을 검색하세요"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="input-field flex-1"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setSearchTerm(searchInput);
-            }
-          }}
-        />
-        <Button className="px-4" onClick={() => setSearchTerm(searchInput)}>검색</Button>
+      <div className="title-box">
+        <p className="title-text">일자리 찾기</p>
+        <div className="search-items">
+          <input
+            type="text"
+            placeholder="일자리나 회사명을 검색하세요"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="search-bar"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setSearchTerm(searchInput);
+              }
+            }}
+          />
+          <button className="search-btn" onClick={() => setSearchTerm(searchInput)}>
+            검색
+          </button>
+        </div>
+
       </div>
-      
-      <div className="space-x-2 mb-6">
-        <button className="px-4 text-gray-500">상세 필터</button>
-        <button className="px-4 text-gray-500">내 주변</button>
+
+      <div className="ft-box">
+        <button className="ft-btn-one">
+          <img className="ft-icon" src="src/components/screens/filter-icon.png"/>
+          <span className="ft-text-one">상세 필터</span>
+        </button>
+        <button className="ft-btn-two ft-text-two">ex: 금액순</button>
       </div>
-      <h2 className="mb-4">전체 {jobs.filter.length}개</h2>
-      
+      <div className="len-latest-box">
+        <p className="ft-len-text">전체 {filteredJobs.length}개</p>
+        <button className="latest">최신순</button> {/* 아직 미구현 */}
+      </div>
+
       {/* 일자리 목록 */}
-      <div className="space-y-4">
+      <div>
         {filteredJobs.map((job) => (
-          <div key={job.id} className="card hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex-1">
-                <h3 className="font-semibold mb-1">{job.title}</h3>
-                <p className="text-gray-600 mb-2">{job.company}</p>
-                <div className="flex flex-col flex-wrap text-sm text-gray-500">
-                  <span className="font-semibold text-lg text-gray-700">
-                    {job.salary}
-                  </span>
-                  <span>📍 {job.location}</span>
-                  <span>⏰ {job.workingHours}</span>
+          <div key={job.id} className="list-card">
+            <div className="">
+
+              <div className="card-text">
+                <div className="card-title-box">
+                  <p className="card-title">{job.title}</p>
+                  <p className="work-type">파트타임</p>
+                </div>
+                
+                <div className="company-box">
+                  <div className="company-box-in">
+                    <img className="company-icon" src="src/components/screens/company-icon.svg"/>
+                    <p className="card-company">{job.company}</p>
+                  </div>
+                  <p className="company-type">중소기업</p>
+                </div>
+                <div className="salary-box">
+                  <p className="card-salary">{job.salary}</p>
+                  <p className="working-days">주5일근무</p>
+                </div>
+                
+                <div className="condition-box">
+                  <div className="condition-line">
+                    <img className="condition-icon" src="src/components/screens/location-icon.svg"/>
+                    <p className="condition-text">{job.location}</p>
+                  </div>
+                  <div className="condition-line">
+                    <img className="condition-icon" src="src/components/screens/time-icon.svg"/>
+                    <p className="condition-text">{job.workingHours}</p>
+                  </div>
+                </div>
+                <div className="des-box">
+                  <p className="des-text">{job.description}</p>
+                  <p className="des-text">{job.description}</p>
                 </div>
               </div>
             </div>
 
-            <p className="text-gray-700 text-sm mb-4">{job.description}</p>
-
-            <div className="flex flex-col gap-2">
-              <Button onClick={() => onApply && onApply(job)}>지원하기</Button>
-              <Button
-                className="bg-gray-500 hover:bg-gray-600"
+            <div className="btn-box">
+              <button className="btn-one" onClick={() => onApply && onApply(job)}>저장하기</button>
+              <button
+                className="btn-two"
                 onClick={() =>
-                  onNavigate && onNavigate(SCREENS.JOB_DETAIL, job)
+                onNavigate && onNavigate(SCREENS.JOB_DETAIL, job)
                 }
               >
                 상세보기
-              </Button>
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      <button className="more-btn">더 많은 일자리 보기</button>
     </div>
   );
 };

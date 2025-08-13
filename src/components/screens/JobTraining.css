@@ -1,0 +1,368 @@
+.pg {
+  background-color: #F8F9FA;
+  width: 412px;
+  min-height: 100vh;
+
+  padding-bottom: 15px;
+}
+
+.list-card {
+  width: 374px;
+  height: 480px; /* 469px */
+
+  background: white;
+  border-radius: 4px;
+
+  padding: 22px 19px;
+  margin-left: 19px;
+  margin-bottom: 25px;
+}
+
+.list-card:last-child {
+  margin-bottom: 9px;
+}
+
+.btn-one {
+  width: 330px;
+  height: 40px;
+
+  background-color: #4f46e5;
+  color: white;
+  font-family: Inter;
+  font-size: 17.5px;
+  font-weight: 700;
+
+  border-color: #5b53e6;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.btn-two {
+  width: 330px;
+  height: 40px;
+
+  background-color: #f6f8fb;
+  color: #A7A2ED;
+  font-family: Inter;
+  font-size: 17.5px;
+  font-weight: 700;
+
+  border-color: #8680ec;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 8px 127px;
+}
+
+.btn-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-btn {
+  width: 68px;
+  height: 51px;
+
+  font-size: 17px;
+  color: white;
+  background-color: #715eff;
+
+  border: 1px solid #6453fb;
+  border-radius: 12px;
+
+  padding: 10px 6px;
+  margin-left: 11px;
+}
+
+.search-bar {
+  background: url(./search-icon.png);
+  background-repeat: no-repeat;
+  background-size: 20px;
+
+  width: 299px;
+  height: 63px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-family: Inter;
+
+  background-position : 20px 20px;
+  border: 1px solid #BFBFBF;
+
+  margin-left: 16px;
+  padding-left: 54px;
+}
+
+.search-bar::placeholder {
+  color: #BABABC;
+  opacity: 1;
+}
+
+.search-items {
+  display: flex;
+  align-items: center;
+}
+
+.title-box {
+  width: 412px;
+  height: 175px;
+  background-color: white;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 22px */
+}
+
+.title-text {
+  font-family: Inter;
+  color: #000;
+  font-size: 28px;
+  font-weight: 700;
+
+  padding-left: 24px;
+  padding-top: 27px;
+}
+
+.ft-btn-one {
+  height: 54px;
+  
+  background-color: #F6F8FB;
+  border: 2px solid #EBEFFD;
+
+  display: flex;
+  align-items: center;
+  
+  gap: 15px;
+  padding-left: 21px;
+}
+
+.ft-icon {
+  width: 14px;
+  height: 13px;
+}
+
+.ft-text-one {
+  font-family: Inter;
+  font-size: 16.5px;
+  font-weight: 400;
+}
+
+.ft-text-two {
+  font-family: Inter;
+  font-size: 17.8px;
+  font-weight: 400;
+}
+
+.ft-btn-two {
+  background-color: #F6F8FB;
+  border: 2px solid #EBEFFD;
+
+  padding-left: 21px;
+}
+
+.ft-box {
+  display: flex;
+
+  gap: 13px;
+  margin-left: 21px;
+  margin-top: 23px;
+}
+
+.ft-len-text {
+  font-family: Inter;
+  color: #000;
+  font-size: 22.2px;
+  font-weight: 500;
+
+  margin-left: 22px;
+}
+
+.card-title-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-family: Inter;
+  color: #000;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 28.016px;
+}
+
+.work-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 71px;
+  height: 31px;
+  margin-top: 4px;
+  
+  border-radius: 6.25px;
+  background: #DFE6FF;
+
+  color: #9392ED;
+  font-family: Inter;
+  font-size: 14.9px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.card-company {
+  font-family: Inter;
+  color: #000;
+  line-height: normal;
+}
+
+.card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.company-box {
+  display: flex;
+  align-items: center;
+  gap: 10.5px;
+}
+
+.company-box-in {
+  display: flex;
+  align-items: center;
+}
+
+.company-icon {
+  padding: 10px;
+}
+
+.company-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 61px;
+  height: 26px;
+  margin-top: 2px;
+
+  color: #000;
+  font-family: Inter;
+  font-size: 12.9px;
+  font-weight: 400;
+
+  border-radius: 12px;
+  border: 1px solid #FBFBFB;
+  background: #F3F3F6;
+}
+
+.card-salary {
+  color: #000;
+  font-family: Inter;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.salary-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.working-days {
+  color: #000;
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 2px;
+}
+
+.location-icon {
+  width: 24px;
+}
+
+.condition-line {
+  display: flex;
+  gap: 8px;
+}
+
+.condition-box {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.condition-text {
+  color: #000;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.des-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.des-text {
+  color: #000;
+  font-family: Inter;
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.len-latest-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 33px;
+  margin-bottom: 25px;
+}
+
+.latest {
+  padding: 2px;
+  margin-top: 7px;
+  margin-right: 20px;
+
+  color: #709AFB;
+  font-family: Inter;
+  font-size: 16.3px;
+  font-weight: 500;
+}
+
+.more-btn {
+  display: flex;
+  width: 330px;
+  height: 63px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  border-radius: 4px;
+  border: 1px solid #000;
+  background: #FFF;
+
+  margin-left: 41px;
+
+  font-family: Inter;
+  font-size: 19px;
+  font-weight: 700;
+}
