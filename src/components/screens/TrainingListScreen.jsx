@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../ui/Button';
 import { SCREENS } from '../../constants/screens';
+import '../../styles/JobTraining.css';
 
-export const TrainingListScreen = ({ onNavigate, onBack, onApply }) => {
+export const TrainingListScreen = ({ onNavigate, onApply }) => {
   const [trainings, setTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
@@ -55,7 +55,7 @@ export const TrainingListScreen = ({ onNavigate, onBack, onApply }) => {
 
   if (loading) {
     return (
-      <div className="page">
+      <div className="pg">
         <div className="text-center py-8">
           <div className="text-4xl mb-4">⏳</div>
           <p>교육 목록을 불러오는 중...</p>
@@ -65,68 +65,120 @@ export const TrainingListScreen = ({ onNavigate, onBack, onApply }) => {
   }
 
   return (
-    <div className="page">
-      <h1 className="text-2xl font-bold text-primary-600 mb-4">
-          교육 프로그램
-      </h1>
+    <div className="pg">
 
       {/* 검색 */}
-      <div className="mb-4 gap-2 flex">
-        <input
-          type="text"
-          placeholder="교육과정이나 기관명을 검색하세요"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="input-field flex-1"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              setSearchTerm(searchInput);
-            }
-          }}
-        />
-        <Button className="px-4" onClick={() => setSearchTerm(searchInput)}>
-          검색
-        </Button>
+      <div className="title-box">
+        <p className="title-text">교육 프로그램</p>
+        <div className="search-items">
+          <input
+            type="text"
+            placeholder="궁금하신 걸 검색해주세요"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="search-bar"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setSearchTerm(searchInput);
+              }
+            }}
+          />
+          <button className="search-btn" onClick={() => setSearchTerm(searchInput)}>
+            검색
+          </button>
+        </div>
       </div>
 
-      <div className="space-x-2 mb-6">
-        <button className="px-4 text-gray-500">상세 필터</button>
-        {/* <button className="px-4 text-gray-500">내 주변</button> */}
+      <div className="ft-box">
+        <button className="ft-btn-one">
+          <img className="ft-icon" src="src/components/screens/icon/filter-icon.png"/>
+          <span className="ft-text-one">상세 필터</span>
+        </button>
+        <button className="ft-btn-two ft-text-two">ex: 금액순</button>
       </div>
-      <h2 className="mb-4">전체 {trainings.length}개</h2>
+      <div className="len-latest-box">
+        <p className="ft-len-text">전체 {filteredTrainings.length}개</p>
+        <button className="latest">인기순</button> {/* 아직 미구현 */}
+      </div>
 
       {/* 교육 목록 */}
-      <div className="space-y-4">
+      <div>
         {filteredTrainings.map((training) => (
-          <div
-            key={training.id}
-            className="card hover:shadow-md transition-shadow"
-          >
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex-1">
-                <h3 className="font-semibold mb-1">{training.title}</h3>
-                <p className="text-gray-600 mb-2">{training.company}</p>
-                <div className="flex flex-col flex-wrap text-sm text-gray-500">
-                  <span>📆 {training.period}</span>
-                  <span>⏰ {training.hours}</span>
-                  <span>📍 {training.location}</span>
-                  <span>👤 {training.target}</span>
+          <div key={training.id} className="list-card">
+            <div>
+              <div className="card-text-t">
+                <div className="card-title-box">
+                  <p className="card-title-t">{training.title}</p>
+                  {training.cost === '무료' && (
+                    <p className="cost-type">{training.cost}</p>
+                  )}
                 </div>
+
+                <div className="condition-box-t">
+                  <div className="condition-line-t">
+                    
+                    <img
+                      className="condition-icon-t"
+                      src="src/components/screens/icon/training-icon.svg"
+                    />
+                    <p className="condition-text-t">{training.company}</p>
+                  </div>
+                  <div className="condition-line-t">
+                    <img
+                      className="condition-icon-t"
+                      src="src/components/screens/icon/calendar-icon.svg"
+                    />
+                    <p className="condition-text-t">{training.period}</p>
+                  </div>
+
+                  <div className="condition-line-t">
+                    <img
+                      className="condition-icon-t"
+                      src="src/components/screens/icon/time-icon.svg"
+                    />
+                    <p className="condition-text-t">{training.hours}</p>
+                  </div>
+
+                  <div className="condition-line-t">
+                    <img
+                      className="condition-icon-t"
+                      src="src/components/screens/icon/location-icon.svg"
+                    />
+                    <p className="condition-text-t">{training.location}</p>
+                  </div>
+                  <div className="condition-line-t">
+                    <img
+                      className="condition-icon-t"
+                      src="src/components/screens/icon/user-icon.svg"
+                    />
+                    <p className="condition-text-t">{training.target}</p>
+                  </div>
+                </div>
+
+                <p className="num">담당자: 02-1111-2222</p>
+
+                {/* <div className="des-box">
+                  <p className="des-text">{job.description}</p>
+                  <p className="des-text">{job.description}</p>
+                </div> */}
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Button onClick={() => onApply && onApply(training)}>
-                수강 신청
-              </Button>
-              <Button
-                className="bg-gray-500 hover:bg-gray-600"
+            <div className="btn-box">
+              <button
+                className="btn-one"
+                onClick={() => onApply && onApply(job)}
+              >
+                저장하기
+              </button>
+              <button
+                className="btn-two"
                 onClick={() =>
-                  onNavigate && onNavigate(SCREENS.TRAINING_DETAIL, training)
+                  onNavigate && onNavigate(SCREENS.TRAINING_DETAIL, job)
                 }
               >
                 상세보기
-              </Button>
+              </button>
             </div>
           </div>
         ))}
