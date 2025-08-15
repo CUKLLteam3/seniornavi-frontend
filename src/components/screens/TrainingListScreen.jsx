@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
-import '../../styles/JobTraining.css';
+import '../../styles/list.css';
 
 export const TrainingListScreen = ({ onNavigate, onApply }) => {
   const [trainings, setTrainings] = useState([]);

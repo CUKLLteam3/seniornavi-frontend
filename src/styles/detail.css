@@ -1,0 +1,196 @@
+.title-box-d {
+  display: flex;
+  gap: 36px;
+  padding-left: 22px;
+  margin-bottom: 16px;
+
+  width: 412px;
+  height: 81px;
+  background: #fff;
+}
+
+.title-text-d {
+  color: #000;
+  font-family: Inter;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: normal;
+  margin-top: 18px;
+}
+
+.back-btn {
+  width: 30px;
+  height: 30px;
+
+  background: url(../components/screens/icon/back-icon.svg);
+  background-repeat: no-repeat;
+  background-size: 30px;
+
+  padding: 0px;
+  margin-top: 22px;
+}
+
+.j-card-1 {
+  width: 374px;
+  padding: 33px 31px;
+
+  border-radius: 4px;
+  background-color: white;
+
+  margin-left: 19px;
+  margin-bottom: 20px;
+}
+
+.job-title {
+  color: #000;
+  font-family: Inter;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 31.727px;
+}
+
+.job-company {
+  color: #868796;
+  text-align: center;
+  font-family: Inter;
+  font-size: 16.7px;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.job-com-box {
+  display: flex;
+  gap: 11px;
+}
+
+.job-com-text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 7px; /* 원래 12px */
+}
+
+.job-salary {
+  color: #8e81f7;
+  font-family: Inter;
+  font-size: 22.3px;
+  font-weight: 700;
+  line-height: normal;
+  margin-top: 51px;
+}
+
+.j-card-2 {
+  width: 374px;
+  padding: 47px 30px;
+
+  border-radius: 4px;
+  background-color: white;
+
+  margin-left: 19px;
+  margin-bottom: 20px;
+}
+
+.sub-title {
+  color: #000;
+  font-family: Inter;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.condition-line-d {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 27px;
+  margin-bottom: 5px;
+}
+
+.sm-title {
+  color: #000;
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27.844px;
+}
+
+.sm-detail {
+  color: #000;
+  font-family: Inter;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 27.844px;
+  margin-bottom: 12px;
+}
+
+.mini-card {
+  width: 314px;
+  background-color: #F8F9FA;
+  padding: 20px 25px;
+  margin-top: 52px;
+}
+
+.j-card-3 {
+  width: 240px;
+  background-color: white;
+  margin-left: 86px;
+  margin-bottom: 35px;
+  padding: 12px 39px;
+}
+
+.icon-text {
+  display: flex;
+  gap: 15px;
+}
+
+.user-icon {
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+}
+
+.xs-detail {
+  color: #000;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 27.844px;
+}
+
+.btn-3 {
+  width: 330px;
+  height: 40px;
+
+  background-color: #4f46e5;
+  color: white;
+  font-family: Inter;
+  font-size: 17.5px;
+  font-weight: 700;
+
+  border-color: #5b53e6;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-bottom: 35px;
+  margin-left: 41px;
+}
+
+.li {
+  margin-left: 10px;
+}
+
+.link {
+  font-size: 15px;
+  line-height: 27.844px;
+
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

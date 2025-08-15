@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
-import '../../styles/JobTraining.css';
+import '../../styles/list.css';
 
 export const JobListScreen = ({ onNavigate, onApply }) => {
   const [jobs, setJobs] = useState([]);
@@ -163,7 +163,7 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
                 className="btn-one"
                 onClick={() => onApply && onApply(job)}
               >
-                저장하기
+                지원하기
               </button>
               <button
                 className="btn-two"
