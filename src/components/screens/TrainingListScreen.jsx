@@ -167,14 +167,14 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
             <div className="btn-box">
               <button
                 className="btn-one"
-                onClick={() => onApply && onApply(job)}
+                onClick={() => onApply && onApply(training)}
               >
                 저장하기
               </button>
               <button
                 className="btn-two"
                 onClick={() =>
-                  onNavigate && onNavigate(SCREENS.TRAINING_DETAIL, job)
+                  onNavigate && onNavigate(SCREENS.TRAINING_DETAIL, training)
                 }
               >
                 상세보기
@@ -183,6 +183,8 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
           </div>
         ))}
       </div>
+
+      <button className="more-btn">더 많은 교육 프로그램 보기</button>
     </div>
   );
 };

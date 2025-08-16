@@ -124,13 +124,14 @@
 
 .mini-card {
   width: 314px;
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
   padding: 20px 25px;
-  margin-top: 52px;
+  margin-top: 40px;
 }
 
 .j-card-3 {
   width: 240px;
+  border-radius: 4px;
   background-color: white;
   margin-left: 86px;
   margin-bottom: 35px;
@@ -173,7 +174,7 @@
   justify-content: center;
   align-items: center;
 
-  margin-bottom: 35px;
+  margin-bottom: 20px;
   margin-left: 41px;
 }
 
@@ -193,4 +194,63 @@
 
 .link:hover {
   text-decoration: underline;
+}
+
+.detail-title {
+  display: flex;
+  width: 185px;
+  height: 57px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+
+  font-family: Inter;
+  color: #000;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 27.844px;
+
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+
+  word-break: keep-all;
+}
+
+.sche-line {
+  display: flex;
+  gap: 20px;
+}
+
+.sche-icon {
+  width: 25px;
+  height: 35px;
+}
+
+.con-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.con-icon-2 {
+  width: 22px;
+  height: 30px;
+  margin-right: 6px;
+}
+
+.mini-line {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mini-text {
+  color: #9b90fd;
+  font-family: Inter;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-left: 2px;
 }

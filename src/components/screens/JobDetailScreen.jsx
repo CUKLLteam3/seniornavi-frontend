@@ -50,11 +50,7 @@ export const JobDetailScreen = ({
           <hr></hr>
 
           <div className="condition-line-d">
-            <img
-              src="src/components/screens/icon/calendar-icon.svg"
-              width={'22px'}
-              height={'22px'}
-            />
+            <img style={{ padding: "2px" }} src="src/components/screens/icon/calendar-icon.svg" />
             <p className="sm-title">근무형태</p>
           </div>
           <p className="sm-detail">주 5일</p>
@@ -147,10 +143,9 @@ export const JobDetailScreen = ({
                 <p className="sm-detail">홈페이지</p>
               </div>
               <p className="link">
-                <a 
-                  href="https://likelion.net/" 
-                  target="_blank"
-                >https://likelion.net/</a>
+                <a href="https://likelion.net/" target="_blank">
+                  https://likelion.net/
+                </a>
               </p>
             </div>
           </div>
