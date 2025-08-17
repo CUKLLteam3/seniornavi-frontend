@@ -1,11 +1,11 @@
 import React from "react";
 import "./home.css";
-import penguin from "../../assets/메인_페이지.webp"; // 상단 펭귄 이미지
+import penguin from "../../assets/메인_페이지.webp";
 
 export default function HomeScreen({ onNavigate }) {
   return (
     <div className="home-app v3">
-      {/* 상단 헤더 (펭귄 + 타이틀/서브) */}
+      {/* 헤더 */}
       <header className="hf-header">
         <img className="hf-penguin" src={penguin} alt="Re-fly" />
         <div className="hf-titles">
@@ -14,7 +14,7 @@ export default function HomeScreen({ onNavigate }) {
         </div>
       </header>
 
-      {/* 리스트 패널(연한 박스) 안에 카드 4개 */}
+      {/* 리스트 */}
       <main className="hf-list">
         <div className="hf-list-inner">
           <NavRow
@@ -47,18 +47,18 @@ export default function HomeScreen({ onNavigate }) {
   );
 }
 
-/* ===================== 소품 ===================== */
+/* ===== 재사용 컴포넌트 ===== */
 function NavRow({ icon, title, desc, onClick }) {
   return (
     <button type="button" className="hf-row" onClick={onClick}>
       <span className="hf-row__icon">{icon}</span>
-
       <span className="hf-row__text">
         <span className="hf-row__title">{title}</span>
         <span className="hf-row__desc">{desc}</span>
       </span>
-
-      <Chevron />
+      <span className="hf-row__chev" aria-hidden="true">
+        <Chevron />
+      </span>
     </button>
   );
 }
@@ -71,7 +71,7 @@ function Chevron() {
   );
 }
 
-/* 아이콘 – 보라톤/두께 고정 */
+/* ===== 아이콘 ===== */
 const STROKE = "#6B61D8";
 const SW = 2;
 

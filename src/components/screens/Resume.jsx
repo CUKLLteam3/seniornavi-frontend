@@ -1,6 +1,6 @@
 import React from "react";
 import "./resume.css";
-import penguin from "../../assets/이력_등록하기.webp"; // 새 이미지
+import penguin from "../../assets/이력_등록하기.webp"; 
 
 export default function ResumeScreen({ onNavigate, onStart }) {
   const handleStart = () => (onStart ? onStart() : alert("설문 시작!"));

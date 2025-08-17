@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react";
-import "./login.css"; // 아래 CSS 파일을 같은 폴더에 두거나 경로 맞춰서 임포트
+import "./login.css";
+// ✅ 더미 로그인 API 불러오기
+import { login } from "../../utils/auth";
 
 export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
   const [tab, setTab] = useState("password"); // 'password' | 'sms'(비활성)
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");     // ✅ 에러 메시지 상태
 
   // 010-1234-5678 포맷 표시
   const formattedPhone = useMemo(() => {
@@ -18,22 +21,34 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
   const phoneValid = /^01[016789]-?\d{3,4}-?\d{4}$/.test(phone);
   const canSubmit = tab === "password" && phoneValid && password.length >= 4 && !loading;
 
-  function handleSubmit(e) {
+  // ✅ 실제 로그인 흐름(지금은 mock 호출)
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!canSubmit) return;
     setLoading(true);
-    setTimeout(() => {
+    setError("");
+
+    try {
+      // 전화번호는 숫자만 전달
+      const rawPhone = phone.replace(/\D/g, "");
+      // { token, user } 형태로 반환됨 (auth.mock.js)
+      const data = await login({ phone: rawPhone, password });
+      // 부모로 전달 → App.jsx에서 localStorage 저장 + 홈으로 전환
+      onLogin?.(data);
+    } catch (err) {
+      setError(err?.message || "로그인에 실패했어요");
+    } finally {
       setLoading(false);
-      onLogin?.({ method: "phone", phone, password });
-    }, 400);
+    }
   }
 
+  // (선택) 카카오 버튼은 그대로 유지
   function handleKakao() {
     if (loading) return;
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLogin?.({ method: "kakao" });
+      onLogin?.({ token: "kakao-fake", user: { name: "카카오유저" } });
     }, 400);
   }
 
@@ -54,7 +69,7 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
           <p className="rf-sub2">시니어 취업 플랫폼</p>
         </div>
 
-        {/* 포인트 3개 (한 줄 고정) */}
+        {/* 포인트 3개 */}
         <div className="rf-points">
           <div className="rf-point">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#10B981" strokeWidth="2" className="rf-icon">
@@ -134,21 +149,17 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
               />
             </div>
 
-            <button type="submit" disabled={!canSubmit} className={`rf-btn rf-btn-gray ${!canSubmit ? "is-disabled" : ""}`}>
-              로그인하기
+            {/* ✅ 에러 메시지 */}
+            {error && <div className="rf-help-err" style={{ marginTop: 4 }}>{error}</div>}
+
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className={`rf-btn rf-btn-gray ${!canSubmit ? "is-disabled" : ""}`}
+            >
+              {loading ? "로그인 중..." : "로그인하기"}
             </button>
           </form>
-
-          {/* 또는 */}
-          <div className="rf-divider">
-            <span>또는</span>
-          </div>
-
-          {/* 카카오 */}
-          <button onClick={handleKakao} disabled={loading} className="rf-btn rf-btn-kakao">
-            <span className="rf-k-badge">K</span>
-            카카오로 간편 로그인
-          </button>
 
           {/* 회원가입 */}
           <div className="rf-center-txt">아직 회원이 아니신가요?</div>
@@ -159,12 +170,8 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
 
         {/* 하단 안내 */}
         <div className="rf-footer">
-          <p>
-            <b>개인정보 보호:</b> 모든 정보는 암호화되어 안전하게 처리됩니다
-          </p>
-          <p>
-            <b>고객센터:</b> 로그인에 어려움이 있으면 언제든 문의하세요
-          </p>
+          <p><b>개인정보 보호:</b> 모든 정보는 암호화되어 안전하게 처리됩니다</p>
+          <p><b>고객센터:</b> 로그인에 어려움이 있으면 언제든 문의하세요</p>
           <div className="rf-links">
             <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">고객센터</a>
           </div>

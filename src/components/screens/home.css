@@ -3,113 +3,147 @@
   --pad-x: 20px;
   --tabbar-h: 84px;
 
-  --bg: #F5F7FB;      /* 화면 바탕 */
-  --panel:#F3F5FA;    /* 리스트 패널(연회색) */
-  --card: #FFFFFF;    /* 카드 */
-  --line: #E8EBF2;    /* 테두리 */
+  --bg: #F6F8FB;        /* 전체 배경 */
+  --card:#FFFFFF;       /* 카드 */
+  --line:#E8EBF2;       /* 얇은 테두리 */
   --title:#111;
-  --muted:#6B7280;
   --violet:#6B61D8;
-  --icon-bg:#F1ECFF;  /* 아이콘 배경(연보라) */
+  --icon-bg:#F1ECFF;
 
-  /* === 간격(널널하게) 변수 === */
-  --row-gap: 20px;           /* 카드끼리 세로 간격 */
-  --row-pad-y: 18px;         /* 카드 상하 패딩 */
-  --row-pad-x: 16px;         /* 카드 좌우 패딩 */
-  --col-gap: 18px;           /* 아이콘-텍스트-화살표 사이 간격 */
-  --title-desc-gap: 8px;     /* 제목-설명 간격 */
-  --icon-box: 44px;          /* 아이콘 박스 한 변 */
+  --row-gap: 20px;      /* 카드 간격 */
+  --row-pad-y: 20px;    /* 카드 패딩(세로) ↑ */
+  --row-pad-x: 16px;
+  --col-gap: 15px;      /* 아이콘-텍스트-화살표 간격 */
+  --title-desc-gap: 8px;/* 제목-설명 간격 ↑ */
+  --icon-box: 44px;
+
+  /* 카드 묶음 정확 중앙용 폭: 412 - 양쪽 여백 20*2 */
+  --content-w: calc(var(--frame-w) - var(--pad-x) * 2); /* 372px */
 }
 
-/* ===== 전역 간섭 차단 (의사요소/마커 포함) ===== */
+/* 전역 리셋 */
 .home-app.v3 *{ box-sizing:border-box; }
-.home-app.v3 img{ max-width:none !important; height:auto; }
+.home-app.v3 img{ max-width:none !important; height:auto; display:block; }
 .home-app.v3 button{ all:unset; cursor:pointer; display:block; }
 .home-app.v3 *::marker{ content:none !important; }
-.home-app.v3 *::before,
-.home-app.v3 *::after{ content: none !important; }
 
-/* 컨테이너 */
+/* 프레임 */
 .home-app.v3{
-  width:100%;
-  min-height:100vh;
-  background:var(--bg);
+  width: var(--frame-w);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bg) !important;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* ===== 헤더 ===== */
-.hf-header{
+.home-app.v3 .hf-header{
   display:flex;
   align-items:flex-start;
   gap:14px;
-  padding:22px var(--pad-x) 14px;
-  background:#fff;
-  border-bottom:1px solid var(--line);
+  padding:25px 5px 1px;
+  background: transparent !important;
+  border-bottom:0 !important;
 }
-.hf-penguin{ width:68px; height:68px; object-fit:contain; display:block; margin-top:2px; }
-.hf-title{ font-size:32px; font-weight:800; color:#151515; line-height:1.06; letter-spacing:.2px; margin:0; }
-.hf-sub{ margin-top:8px; font-size:15px; font-weight:700; color:#1a1a1a; }
-
-/* ===== 리스트 패널 ===== */
-.hf-list{ padding:14px var(--pad-x) calc(var(--tabbar-h) + 14px); }
-.hf-list-inner{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px;
+.home-app.v3 .hf-penguin{ width:110px; height:110px; object-fit:contain; margin-top:1px; }
+.home-app.v3 .hf-titles{ display:flex; flex-direction:column; }
+.home-app.v3 .hf-title{
+  margin-top:18px;
+  font-size:32px;
+  font-weight:900;
+  color:#000000;
+  line-height:1.06;
+  letter-spacing:.2px;
+}
+.home-app.v3 .hf-sub{
+  margin-top:5px;
+  font-size:20px;
+  font-weight:900;
+  color:#000000;
 }
 
-/* ===== 한 줄 카드 (아이콘 | 텍스트 | 화살표) ===== */
-.hf-row{
-  display:flex;                    /* → 화살표 오른쪽 고정에 최적 */
+/* ===== 리스트 ===== */
+/* ⭕️ 패딩의 좌우를 0으로 → 중앙 정렬에 간섭 제거 */
+/* ⭕️ flex + center 로 리스트 블록 자체를 정확히 가운데 */
+.home-app.v3 .hf-list{
+  padding:17px 0 calc(var(--tabbar-h) + 14px);
+  display:flex;
+  justify-content:center;
+}
+
+/* ⭕️ 리스트 내부 너비를 고정해서 항상 정확히 중앙 */
+.home-app.v3 .hf-list-inner{
+  background:transparent !important;
+  padding:0 !important;
+  width: var(--content-w);   /* 372px */
+  margin: 0 auto;            /* 안전빵 중앙 */
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===== 카드 ===== */
+.home-app.v3 .hf-row{
+  display:flex !important;
+  flex-wrap:nowrap !important;
   align-items:center;
-  gap: var(--col-gap);             /* 아이콘-텍스트-화살표 간격 */
-  width:100%;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding: var(--row-pad-y) var(--row-pad-x);
-  box-shadow:0 1px 3px rgba(0,0,0,.02);
+  gap: var(--col-gap);
+  width:340px;
+  background: var(--card);
+  border-radius:4px;
+  padding: 24px 10px 24px;
 }
-/* 카드끼리 간격 */
-.hf-row + .hf-row{ margin-top: var(--row-gap); }
 
-/* 아이콘 박스(왼쪽) */
-.hf-row__icon{
+.home-app.v3 .hf-row + .hf-row{ margin-top: var(--row-gap); }
+
+/* 아이콘 박스 */
+.home-app.v3 .hf-row__icon{
   flex:none;
-  width: var(--icon-box); height: var(--icon-box);
+  width: var(--icon-box);
+  height: var(--icon-box);
   border-radius:12px;
   background:var(--icon-bg);
-  display:grid; place-items:center;
+  display:grid;
+  place-items:center;
   color:var(--violet);
 }
 
-/* 텍스트(가운데, 세로 두 줄) */
-.hf-row__text{
-  display:flex; flex-direction:column;
+/* 텍스트 */
+.home-app.v3 .hf-row__text{
+  display:flex;
+  flex-direction:column;
   gap: var(--title-desc-gap);
-  min-width:0;                     /* 말줄임 방지 */
+  min-width:0 !important;
+  flex:1 !important;
 }
-.hf-row__title{
-  font-size:17px;                  /* 제목 살짝 키움 */
-  font-weight:800;
+.home-app.v3 .hf-row__title{
+  font-size:18px;
+  font-weight:900;
   color:var(--title);
-  line-height:1.15;
+  line-height:1.2;
 }
-.hf-row__desc{
-  font-size:14px;
-  line-height:1.5;
-  color:#222;
-  font-weight:500;                 /* 설명은 너무 두껍지 않게 */
-  white-space:normal; word-break:keep-all;
+.home-app.v3 .hf-row__desc{
+  font-size:15px;
+  line-height:1.6; /* ↑ */
+  color:#2a2a2a;
+  font-weight:900;
+  white-space:normal;
+  word-break:keep-all;
 }
 
-/* 화살표(오른쪽 끝 고정) */
-.hf-row > svg:last-child{
-  margin-left: auto;               /* ← 항상 오른쪽 끝 */
-  flex:none;
+/* 화살표 */
+.home-app.v3 .hf-row__chev{
+  margin-left:auto !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  flex:none !important;
+}
+.home-app.v3 .hf-row__chev svg{
+  width:18px; height:18px;
+  stroke:#9AA1AC; stroke-width:2; fill:none;
 }
 
 /* 탭바 여백 */
 @media (max-width: 412px){
-  .hf-list{ padding-bottom: calc(var(--tabbar-h) + 14px); }
+  .home-app.v3 .hf-list{ padding-bottom: calc(var(--tabbar-h) + 14px); }
 }

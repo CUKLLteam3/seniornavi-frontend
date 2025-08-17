@@ -1,146 +1,324 @@
-import React, { useState } from "react";
+// src/components/screens/MyPage.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import "../../styles/mypage.css";
+import { Pencil, MapPin, Target, Wrench, Heart, FileText, ChevronRight } from "lucide-react";
+
 import {
-  Pencil, MapPin, Target, Wrench, Heart, Briefcase, GraduationCap, Bell
-} from "lucide-react";
+  getResume,
+  getSavedRecruits,
+  deleteSavedRecruit,
+  getSavedEducation,
+  deleteSavedEducation,
+} from "../../utils/mypage";
 
-export default function MyPage({ onLogout }) {
-  const [topTab, setTopTab] = useState("resume");     // resume | likes
-  const [midTab, setMidTab] = useState("edu");        // edu | job
+import Modal from "./Modal.jsx";
 
+export default function MyPage({ onLogout, onNavigate }) {
+  // 로그인 유저 (id 없으면 임시 1)
+  const user = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("user") || "null"); }
+    catch { return null; }
+  }, []);
+  const userId = user?.id ?? 1;
+
+  const [resume, setResume] = useState(null);
+  const [recruits, setRecruits] = useState(null);
+  const [educations, setEducations] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  // 모달
+  const [openResume, setOpenResume] = useState(false);
+  const resumeText = useMemo(
+    () => (typeof resume === "string" ? resume : JSON.stringify(resume ?? {}, null, 2)),
+    [resume]
+  );
+  useEffect(() => { document.body.style.overflow = openResume ? "hidden" : ""; }, [openResume]);
+
+  // 버튼 스타일(컴포넌트 내부에 선언)
+  const btnPrimary = {
+    background: "#4F46E5",
+    color: "#fff",
+    border: "none",
+    padding: "12px 14px",
+    borderRadius: 12,
+    cursor: "pointer",
+    fontWeight: 800,
+    fontSize: 14,
+  };
+  const btnGhost = {
+    background: "#fff",
+    color: "#4F46E5",
+    border: "2px solid #C7D2FE",
+    padding: "12px 14px",
+    borderRadius: 12,
+    cursor: "pointer",
+    fontWeight: 800,
+    fontSize: 14,
+  };
+
+  // 데이터 로드 (일부 실패해도 나머지 표시)
+  const load = async () => {
+    setLoading(true);
+    setErr("");
+    const [a, b, c] = await Promise.allSettled([
+      getResume(userId),
+      getSavedRecruits(userId),
+      getSavedEducation(userId),
+    ]);
+    if (a.status === "fulfilled") setResume(a.value); else setResume(null);
+    if (b.status === "fulfilled") setRecruits(Array.isArray(b.value) ? b.value : []); else setRecruits([]);
+    if (c.status === "fulfilled") setEducations(Array.isArray(c.value) ? c.value : []); else setEducations([]);
+    const fails = [a, b, c].filter((x) => x.status === "rejected").length;
+    if (fails === 3) setErr("마이페이지 데이터를 불러오지 못했어요.");
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, [userId]);
+
+  // 삭제 (403이면 개발 모드로 로컬만 삭제)
+  const removeRecruit = async (sn) => {
+    if (!window.confirm("이 공고를 저장 목록에서 삭제할까요?")) return;
+    const res = await deleteSavedRecruit(userId, sn);
+    if (res.ok) {
+      setRecruits((prev) => (prev || []).filter((x) => (x?.sn ?? x) !== sn));
+    } else if (res.status === 401 || res.status === 403) {
+      setRecruits((prev) => (prev || []).filter((x) => (x?.sn ?? x) !== sn));
+      alert("개발 모드: 서버 권한 때문에 로컬에서만 삭제했어요. (배포용은 로그인 연동 필요)");
+    } else {
+      alert("공고 삭제에 실패했어요.");
+    }
+  };
+
+  const removeEducation = async (sn) => {
+    if (!window.confirm("이 교육을 저장 목록에서 삭제할까요?")) return;
+    const res = await deleteSavedEducation(userId, sn);
+    if (res.ok) {
+      setEducations((prev) => (prev || []).filter((x) => (x?.sn ?? x) !== sn));
+    } else if (res.status === 401 || res.status === 403) {
+      setEducations((prev) => (prev || []).filter((x) => (x?.sn ?? x) !== sn));
+      alert("개발 모드: 서버 권한 때문에 로컬에서만 삭제했어요. (배포용은 로그인 연동 필요)");
+    } else {
+      alert("교육 삭제에 실패했어요.");
+    }
+  };
+
+  // 표시용 포맷터
+  const fmtRecruit = (item) => {
+    const sn = item?.sn ?? item;
+    return {
+      sn,
+      title: item?.title ?? `공고 #${sn}`,
+      org: item?.org ?? item?.company ?? "",
+      area: item?.area ?? item?.region ?? "",
+      pay: item?.payText ?? item?.salary ?? "",
+    };
+  };
+  const fmtEducation = (item) => {
+    const sn = item?.sn ?? item;
+    return {
+      sn,
+      title: item?.title ?? `교육 #${sn}`,
+      org: item?.org ?? item?.center ?? "",
+      area: item?.area ?? item?.region ?? "",
+    };
+  };
+
+  /* ───────── 상태별 UI ───────── */
+  if (loading) {
+    return (
+      <div className="mypg v2">
+        <div className="mypg__header-wrap">
+          <h1 className="mypg__title">내 정보</h1>
+          <p className="mypg__subtitle">내 이력과 활동 관리</p>
+        </div>
+        <main className="mypg__content">
+          <section className="card-box">불러오는 중...</section>
+        </main>
+      </div>
+    );
+  }
+  if (err) {
+    return (
+      <div className="mypg v2">
+        <div className="mypg__header-wrap">
+          <h1 className="mypg__title">내 정보</h1>
+          <p className="mypg__subtitle">내 이력과 활동 관리</p>
+        </div>
+        <main className="mypg__content">
+          <section className="card-box" style={{ color: "red" }}>{err}</section>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button className="mini__btn" onClick={load}>다시 시도</button>
+            {onLogout && <button className="mini__btn" onClick={onLogout}>로그아웃</button>}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  /* ───────── 정상 UI ───────── */
   return (
-    <div className="mypg">
-      {/* 상단 타이틀 (피그마: 얇은 보조텍스트 + 제목) */}
-      <header className="mypg__hdr">
-        <h1 className="mypg__title">마이페이지</h1>
-        <div className="mypg__hint">내 정보와 활동 관리</div>
-      </header>
-
-      {/* 상단 2-탭 (채워진/비활성 회색배경) */}
-      <div className="mypg__seg">
-        <button
-          type="button"
-          className={`seg__btn ${topTab === "resume" ? "is-active" : ""}`}
-          onClick={() => setTopTab("resume")}
-        >
-          <Pencil size={16} />
-          <span>내 이력</span>
-        </button>
-        <button
-          type="button"
-          className={`seg__btn ${topTab === "likes" ? "is-active" : ""}`}
-          onClick={() => setTopTab("likes")}
-        >
-          <Heart size={16} />
-          <span>나의 관심목록</span>
-        </button>
+    <div className="mypg v2">
+      <div className="mypg__header-wrap">
+        <h1 className="mypg__title">내 정보</h1>
+        <p className="mypg__subtitle">내 이력과 활동 관리</p>
       </div>
 
-      {/* ── 내 이력 섹션 ───────────────────────────── */}
-      {topTab === "resume" && (
-        <section className="mypg__card list">
+      <main className="mypg__content">
+        {/* 1) 내 이력 */}
+        <section className="card-box">
           <Row icon={<Pencil size={18} />} title="내 이력" />
           <Divider />
-          <Row icon={<MapPin size={18} />} title="거주지 & 건강상태" sub="경기도 & 건강함" />
+          <Row icon={<MapPin size={18} />} title="거주지역 & 건강상태" sub="경기도 & 건강함" />
           <Divider />
           <Row icon={<Target size={18} />} title="희망 직종" sub="사무보조" />
           <Divider />
           <Row icon={<Wrench size={18} />} title="보유 기술" sub="한글" />
         </section>
-      )}
 
-      {/* ── 관심목록 섹션 ─────────────────────────── */}
-      {topTab === "likes" && (
-        <section className="mypg__panel">
-          <h3 className="panel__cap">
+        {/* 2) 완성된 자소서 (클릭 → 모달) */}
+        <section className="card-box">
+          <button
+            className="row link"
+            onClick={() => {
+              if (!resume) return alert("자소서 데이터가 없습니다.");
+              setOpenResume(true);
+            }}
+            style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0 }}
+          >
+            <span className="row__ic"><FileText size={18} /></span>
+            <div className="row__txt">
+              <div className="row__title">완성된 자소서</div>
+              <div className="row__sub">클릭하면 확인할 수 있어요.</div>
+            </div>
+            <ChevronRight className="chev" size={18} />
+          </button>
+        </section>
+
+        {/* 3) 일자리 관심목록 */}
+        <section className="panel">
+          <h3 className="panel__title">
             <Heart size={14} />
-            <span>나의 관심목록</span>
+            <span>일자리 관심목록</span>
           </h3>
 
-          <SubHead>일자리</SubHead>
-          <Card title="아파트 관리사무소 접수원" sub1="경기도 부천시 ◎◎아파트 관리사무소" sub2="월 250만원" cta />
+          {!recruits?.length && <EmptyRow text="저장한 공고가 없습니다." />}
 
-          <Card title="아파트 관리사무소 접수원" sub1="경기도 부천시 ◎◎아파트 관리사무소" sub2="월 250만원" cta />
-
-          <SubHead>교육</SubHead>
-          <Card title="시니어 디지털 역량 강화" sub1="부천시 평생학습관" cta />
-          <Card title="시니어 디지털 역량 강화" sub1="부천시 평생학습관" cta />
+          {recruits?.map((it, idx) => {
+            const r = fmtRecruit(it);
+            return (
+              <MiniCard
+                key={`${r.sn}-${idx}`}
+                title={r.title}
+                r2Left={r.org}
+                r3Left={r.area}
+                r3Right={r.pay}
+                btnText="삭제"
+                onClick={() => removeRecruit(r.sn)}
+              />
+            );
+          })}
         </section>
-      )}
 
-      {/* 중단 외곽선 탭 (좌측 채움, 우측 아웃라인) */}
-      <div className="mypg__seg-ol">
-        <button
-          type="button"
-          className={`segol__btn ${midTab === "edu" ? "is-active" : ""}`}
-          onClick={() => setMidTab("edu")}
-        >
-          <GraduationCap size={16} />
-          <span>교육 지원</span>
-        </button>
-        <button
-          type="button"
-          className={`segol__btn ${midTab === "job" ? "is-active" : ""}`}
-          onClick={() => setMidTab("job")}
-        >
-          <Briefcase size={16} />
-          <span>일자리 지원</span>
-        </button>
-      </div>
-
-      {/* 교육 지원 */}
-      {midTab === "edu" && (
-        <section className="mypg__panel">
-          <h3 className="panel__cap">
-            <GraduationCap size={14} />
-            <span>교육 지원</span>
-            <small className="muted">접수중 / 교육중</small>
+        {/* 4) 교육 관심목록 */}
+        <section className="panel">
+          <h3 className="panel__title">
+            <Heart size={14} />
+            <span>교육 관심목록</span>
           </h3>
 
-          <Card title="중장년 디지털 역량 강화"
-                sub1="부천시 평생학습관" sub2="2025.08.27~2025.09.27" />
+          {!educations?.length && <EmptyRow text="저장한 교육이 없습니다." />}
 
-          <Card title="시니어 창업 실무과정"
-                sub1="경기 일자리센터" sub2="2025.10.27~2025.12.28" />
+          {educations?.map((it, idx) => {
+            const e = fmtEducation(it);
+            return (
+              <MiniCard
+                key={`${e.sn}-${idx}`}
+                title={e.title}
+                r2Left={e.org}
+                r3Left={e.area}
+                btnText="삭제"
+                onClick={() => removeEducation(e.sn)}
+              />
+            );
+          })}
         </section>
-      )}
 
-      {/* 일자리 지원 */}
-      {midTab === "job" && (
-        <section className="mypg__panel">
-          <h3 className="panel__cap">
-            <Briefcase size={14} />
-            <span>일자리 지원</span>
-            <small className="muted">신청중 / 신청완료</small>
-          </h3>
+        <div style={{ height: 12 }} />
 
-          <Card title="마트 계산원" sub1="◎◎마트 본점" sub2="지원일: 2025.08.17" badge="신청중" />
-          <Card title="시니어 창업 실무과정" sub1="경기 일자리센터" sub2="2025.10.27~2025.12.28" badge="신청완료" />
-        </section>
-      )}
+        {/* ── 자소서 모달 (스크린샷 동일 스타일) ── */}
+        <Modal open={openResume} onClose={() => setOpenResume(false)}>
+          {/* 카드 */}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 14,
+              padding: 30,
+              margin: "10px 15px 15px",
+            }}
+          >
+            {/* 제목 */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
+              <span
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 8,
+                  background: "#F1F5FF",
+                  display: "grid",
+                  placeItems: "center",
+                  fontSize: 15,
+                }}
+                aria-hidden
+              >
+                📄
+              </span>
+              <strong style={{ fontSize: 18, color: "#111827" }}>완성된 자소서</strong>
+            </div>
 
-      {/* 알림 + 로그아웃 (피그마 레이아웃) */}
-      <section className="mypg__panel">
-        <h3 className="panel__cap">
-          <Bell size={14} />
-          <span>알림 설정</span>
-        </h3>
+            {/* 텍스트박스 */}
+            <textarea
+              readOnly
+              value={resumeText || "작성된 자소서가 없습니다."}
+              style={{
+                width: "100%",
+                minHeight: 240,
+                resize: "vertical",
+                background: "#FFFFFF",
+                border: "1px solid #E5E7EB",
+                borderRadius: 8,
+                padding: 12,
+                lineHeight: 1.6,
+                fontSize: 15,
+                color: "#111827",
+              }}
+            />
 
-        <SwitchRow title="일자리 알림" sub="새로운 일자리 정보 알림 허용" />
-        <Divider light />
-        <SwitchRow title="교육 알림" sub="새로운 교육 프로그램 알림 허용" />
-      </section>
-
-      <button type="button" className="mypg__logout" onClick={onLogout}>
-        로그아웃
-      </button>
-
-      <div style={{ height: 16 }} />
+            {/* 버튼 2개 */}
+            <div style={{ display: "grid", gap: 12, marginTop: 50 }}>
+              <button
+                onClick={() => {
+                  if (typeof onNavigate === "function") onNavigate("home");
+                  setOpenResume(false);
+                }}
+                style={{...btnPrimary, borderRadius: 4 }}
+              >
+                홈으로 가기
+              </button>
+              <button
+                onClick={() => setOpenResume(false)}
+                style={{...btnGhost, borderRadius: 4 }}
+              >
+                내 정보 가기
+              </button>
+            </div>
+          </div>
+        </Modal>
+      </main>
     </div>
   );
 }
 
-/* ───────── 소품들 ───────── */
+/* ───────── 소품 ───────── */
 function Row({ icon, title, sub }) {
   return (
     <div className="row">
@@ -152,39 +330,20 @@ function Row({ icon, title, sub }) {
     </div>
   );
 }
-function Divider({ light = false }) {
-  return <div className={`divline ${light ? "light" : ""}`} />;
-}
+function Divider() { return <div className="divline" />; }
+function EmptyRow({ text }) { return <div className="mini__empty">{text}</div>; }
 
-function SubHead({ children }) {
-  return <div className="subhead">{children}</div>;
-}
-
-function Card({ title, sub1, sub2, cta, badge }) {
+function MiniCard({ title, r2Left, r2Right, r3Left, r3Right, btnText = "보기", onClick }) {
   return (
-    <div className="card">
-      <div className="card__main">
-        <div className="card__title">{title}</div>
-        {sub1 && <div className="card__sub1">{sub1}</div>}
-        {sub2 && <div className="card__sub2">{sub2}</div>}
+    <div className="mini">
+      <div className="mini__txt">
+        <div className="mini__title">{title}</div>
+        {r2Left ? <div className="mini__r2l">{r2Left}</div> : <div />}
+        {r2Right ? <div className="mini__r2r">{r2Right}</div> : <div />}
+        {r3Left ? <div className="mini__r3l">{r3Left}</div> : <div />}
+        {r3Right ? <div className="mini__r3r">{r3Right}</div> : <div />}
       </div>
-      {cta && <button className="btn-ghost sm">보기</button>}
-      {badge && <span className="badge">{badge}</span>}
-    </div>
-  );
-}
-
-function SwitchRow({ title, sub }) {
-  return (
-    <div className="switchrow">
-      <div className="row__txt">
-        <div className="row__title">{title}</div>
-        <div className="row__sub">{sub}</div>
-      </div>
-      <label className="sw">
-        <input type="checkbox" className="sw__inp" defaultChecked />
-        <span className="sw__bar"><i /></span>
-      </label>
+      <button className="mini__btn" onClick={onClick}>{btnText}</button>
     </div>
   );
 }

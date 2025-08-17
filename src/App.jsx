@@ -6,9 +6,11 @@ import SignupScreen from "./components/screens/SignupScreen.jsx";
 import HomeScreen from "./components/screens/HomeScreen.jsx";
 import ResumeScreen from "./components/screens/Resume.jsx";
 import SurveyWizard from "./components/screens/SurveyWizard.jsx";
+import SurveyComplete from "./components/screens/SurveyComplete.jsx";
 import MyPage from "./components/screens/MyPage.jsx";
 
-import BottomTabBar from "./components/layout/BottomNavigation.jsx"; // ✅ 공용 탭바
+import BottomTabBar from "./components/layout/BottomNavigation.jsx";
+import StatusBar from "./components/layout/StatusBar.jsx";
 
 // 전역 스타일
 import "./styles/globals.css";
@@ -29,18 +31,41 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
+  // 새로고침/재방문 시 자동 복원 (로그인 화면일 때만 시도)
+  useEffect(() => {
+    if (currentPage !== "login") return;
+    const t = localStorage.getItem("token");
+    const u = localStorage.getItem("user");
+    if (t && u) {
+      try {
+        setCurrentUser(JSON.parse(u));
+        setCurrentPage("home");
+      } catch {
+        // 파싱 실패 시 무시
+      }
+    }
+  }, [currentPage]);
+
   // 화면 전환 핸들러
-  const handleNavigate = (screen) => {
-    setCurrentPage(screen);
-  };
+  const handleNavigate = (screen) => setCurrentPage(screen);
 
   // 로그인 완료
   const handleLogin = (data) => {
-    const user = { name: "홍길동", phone: data?.phone ?? null };
-    localStorage.setItem("token", "fake-token");
+    const user = {
+      id: data?.user?.id ?? data?.id ?? 1, // ← 없으면 임시로 1
+      name: data?.user?.name ?? "홍길동",
+      phone: data?.user?.phone ?? data?.phone ?? null,
+    };
+    const token = data?.token || "fake-token";
+    localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setCurrentUser(user);
     setCurrentPage("home");
+  };
+
+  // 회원가입 완료 → 자동 로그인 처리
+  const handleSignupSuccess = (data) => {
+    handleLogin(data);
   };
 
   // 로그아웃
@@ -54,9 +79,9 @@ export default function App() {
   const handleSignup = () => setCurrentPage("signup");
   const handleBackToLogin = () => setCurrentPage("login");
 
-  // 인증 가드: 보호 화면은 토큰/유저 없으면 로그인으로
+  // 인증 가드
   useEffect(() => {
-    const protectedPages = ["home", "mypage", "resume", "survey"];
+    const protectedPages = ["home", "mypage", "resume", "survey", "surveyDone"];
     if (!protectedPages.includes(currentPage)) return;
 
     const t = localStorage.getItem("token");
@@ -74,12 +99,15 @@ export default function App() {
     }
   }, [currentPage, currentUser]);
 
-  // 탭바가 보여질 화면만 지정 (로그인/회원가입에는 X)
-  const tabPages = new Set(["home", "mypage","resume","survey"]);
+  // 탭바 노출 페이지
+  const tabPages = new Set(["home", "mypage", "resume", "survey", "surveyDone"]);
 
   return (
     <div className="app-shell">
       <main className="frame">
+        {/* ✅ 공통 상단 상태바: 모든 화면에서 표시 */}
+        <StatusBar />
+
         {/* 개발 편의: 로컬스토리지 초기화 */}
         <ResetLocalStorage
           onReset={() => {
@@ -99,24 +127,19 @@ export default function App() {
         )}
 
         {currentPage === "signup" && (
-          <SignupScreen onBack={handleBackToLogin} />
+          <SignupScreen onBack={handleBackToLogin} onSignup={handleSignupSuccess} />
         )}
 
         {currentPage === "home" && (
           <HomeScreen
-            user={
-              currentUser ||
-              (localStorage.getItem("user")
-                ? JSON.parse(localStorage.getItem("user"))
-                : null)
-            }
+            user={currentUser}               // ✅ 간소화: localStorage 재조회 제거
             onNavigate={handleNavigate}
             onLogout={handleLogout}
           />
         )}
 
-        {currentPage === "mypage" && (
-          <MyPage onLogout={handleLogout} />
+         {currentPage === "mypage" && (
+           <MyPage onLogout={handleLogout} onNavigate={handleNavigate} />
         )}
 
         {currentPage === "resume" && (
@@ -128,17 +151,21 @@ export default function App() {
 
         {currentPage === "survey" && (
           <SurveyWizard
-            onDone={() => setCurrentPage("home")}
             onBackHome={() => setCurrentPage("home")}
+            onSubmitDone={() => setCurrentPage("surveyDone")}
           />
         )}
 
-        {/* ===== 공용 하단 탭바 (로그인/회원가입 외 화면에서만) ===== */}
-        {tabPages.has(currentPage) && (
-          <BottomTabBar
-            currentPage={currentPage}
-            onNavigate={handleNavigate}
+        {currentPage === "surveyDone" && (
+          <SurveyComplete
+            onGoHome={() => setCurrentPage("home")}
+            onGoCoach={() => alert("AI 코치 상담은 준비중입니다")}
           />
+        )}
+
+        {/* ===== 공용 하단 탭바 (로그인/회원가입 제외) ===== */}
+        {tabPages.has(currentPage) && (
+          <BottomTabBar currentPage={currentPage} onNavigate={handleNavigate} />
         )}
 
         {/* 개발용 디버그 뱃지 */}

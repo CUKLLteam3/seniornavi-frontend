@@ -124,18 +124,7 @@
   display:flex; align-items:center; gap:8px;
   color:#9ca3af; margin:16px 0; font-size:12px;
 }
-.rf-divider::before,.rf-divider::after{
-  content:""; flex:1; height:1px; background:#e5e7eb;
-}
 
-.rf-btn-kakao{
-  background:#FEE500; color:#000;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-}
-.rf-k-badge{
-  width:24px; height:24px; border-radius:10px;
-  background:#000; color:#fff; display:grid; place-items:center; font-size:13px;
-}
 
 .rf-center-txt{ margin-top:20px;  margin-bottom: 20px; text-align:center; color:#6b7280; font-size:15px; }
 

@@ -1,108 +1,51 @@
 :root {
-  --frame-width: 412px;
-  --panel: #f4f6f9; /* 카드 바깥 배경 */
-  --border: #eff1f5; /* 카드 테두리 */
-  --purple: #5b4eb0; /* 제목 색 */
-  --btn-blue: #354ea6; /* 버튼 색 */
+  --panel:#f4f6f9; --border:#eff1f5; --purple:#5b4eb0; --btn-blue:#354ea6;
 }
 
-/* 프레임 */
-.resume-page {
-  width: 100%;
-  max-width: var(--frame-width);
-  min-height: 100dvh;
-  margin: 0 auto;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
+/* ✅ 여기서는 폭 제한/센터링 제거 (frame이 이미 함) */
+.resume-page{
+  width:100%;
+  min-height:100dvh;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
 }
 
-/* 헤더 */
-.resume-header {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  border-bottom: 1px solid var(--border);
-  background: #fff;
-}
-.back-btn {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-.hdr-right {
-  width: 36px;
-  height: 36px;
+.resume-header{
+  height:90px; display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; background:#fff; border-bottom:1px solid var(--border);
 }
 
-/* 본문 */
-.resume-body {
-  background: var(--panel);
-  padding: 16px;
-  min-height: calc(100dvh - 56px);
-  padding-bottom: 100px; /* 탭바 여유 */
+.back-btn{
+  width:48px; height:36px; display:grid; place-items:center;
+  border:0; background:transparent; cursor:pointer;
 }
 
-/* 흰 카드 */
-.resume-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 16px 26px;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-  text-align: center;
+.hdr-right{ width:36px; height:36px; }
+
+.resume-body{
+  background:var(--panel);
+  padding:80px 24px;
+  padding-bottom:100px;                 /* 탭바 여유 */
+  min-height:calc(100dvh - 90px);
 }
 
-/* 이미지 */
-.resume-illust {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 12px;
-}
-.resume-illust img {
-  width: 140px;
-  height: auto;
-  object-fit: contain;
+.resume-card{
+  background:#fff;  
+  border-radius:4px; padding:50px 20px; text-align:center;
 }
 
-/* 텍스트 */
-.resume-title {
-  margin-top: 6px;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--purple);
-}
-.resume-sub {
-  margin-top: 6px;
-  font-size: 15px;
-  color: #111;
-  font-weight: 500;
-}
+.resume-illust{ display:flex; justify-content:center; align-items:center; margin-bottom:40px; }
+.resume-illust img{ width:120px; height:auto; object-fit:contain; }
 
-/* 버튼 */
-.resume-start-btn {
-  margin: 26px auto 0;
-  width: 100%;
-  height: 48px;
-  border: 0;
-  border-radius: 6px;
-  background: #354ea6;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(55, 79, 199, 0.25);
+.resume-title{ margin-top:6px; font-size:25px; font-weight:900; color:var(--purple); }
+.resume-sub{ margin-top:6px; font-size:16px; color:#111; font-weight:900; }
+
+.resume-start-btn{
+  margin:26px auto 0; width:320px; height:48px; margin-top: 100px;
+  border-radius:4px; background:var(--btn-blue);
+  color:#fff; font-size:18px; font-weight:600; cursor:pointer;
+  display:flex; justify-content:center; align-items:center;
 }
-.resume-start-btn:active {
-  transform: translateY(1px);
-}
-.resume-start-btn:hover {
-  filter: brightness(1.03);
-}
+.resume-start-btn:active{ transform:translateY(1px); }
+.resume-start-btn:hover{ filter:brightness(1.03); }

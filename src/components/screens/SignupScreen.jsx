@@ -1,7 +1,9 @@
+// src/components/screens/SignupScreen.jsx
 import { useMemo, useState } from "react";
 import "./signup.css";
+import { signup } from "../../utils/auth"; // ✅ mock 회원가입 API
 
-export default function SignupScreen({ onBack, onSubmit }) {
+export default function SignupScreen({ onBack, onSignup }) {
   // 기본 정보
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -25,7 +27,6 @@ export default function SignupScreen({ onBack, onSubmit }) {
     "육아","반려동물 돌봄","운전","배송","택배","경비","관리","상품 진열",
   ];
   const [skills, setSkills] = useState(new Set());
-
   const toggleSkill = (s) => {
     const next = new Set(skills);
     if (next.has(s)) next.delete(s); else next.add(s);
@@ -50,18 +51,30 @@ export default function SignupScreen({ onBack, onSubmit }) {
     return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7,11)}`;
   }, [phoneDigits]);
 
-  function handleSubmit(e){
+  // ✅ 로딩/에러
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
+  async function handleSubmit(e){
     e.preventDefault();
-    if (!canSubmit) return;
-    const payload = {
-      email, pw, name,
-      phone: formattedPhone,
-      birth, gender, address,
-      edu, career, skills: Array.from(skills),
-      agreeTos, agreePrivacy
-    };
-    onSubmit?.(payload);
-    alert("회원가입이 완료되었습니다 (더미)");
+    if (!canSubmit || loading) return;
+
+    setErr("");
+    setLoading(true);
+    try {
+      // mock API는 name/phone/password만 사용
+      const data = await signup({
+        name: name.trim(),
+        phone: phoneDigits,     // 숫자만
+        password: pw,
+      });
+      // ✅ App.jsx에서 onSignup -> handleSignupSuccess -> handleLogin 으로 자동 로그인됨
+      onSignup?.(data);
+    } catch (e) {
+      setErr(e?.message || "회원가입에 실패했어요");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -150,6 +163,9 @@ export default function SignupScreen({ onBack, onSubmit }) {
 
             {/* 카드 구분선 */}
             <hr className="sg-sep"/>
+
+            {/* (폼 하단에 에러 노출) */}
+            {err && <div className="sg-err" style={{marginTop:8}}>{err}</div>}
           </form>
         </section>
 
@@ -234,9 +250,12 @@ export default function SignupScreen({ onBack, onSubmit }) {
 
         {/* 제출 버튼 */}
         <div className="sg-bottom">
-          <button className={`sg-submit ${!canSubmit ? "is-disabled":""}`} disabled={!canSubmit}
-                  onClick={handleSubmit}>
-            회원가입 완료
+          <button
+            className={`sg-submit ${!canSubmit || loading ? "is-disabled":""}`}
+            disabled={!canSubmit || loading}
+            onClick={handleSubmit}
+          >
+            {loading ? "가입 중..." : "회원가입 완료"}
           </button>
         </div>
       </main>

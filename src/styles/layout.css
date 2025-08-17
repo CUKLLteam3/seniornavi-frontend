@@ -1,49 +1,50 @@
-:root{
-  --frame-w: 412px;         /* 가이드 프레임 */
-  --gutter-x: 19px;         /* 좌우 패딩 */
-  --outer-bg: #ffdede;      /* ★ 바깥(양옆) 배경색 - 사진처럼 핑크 */
-  --inner-bg: #ffffff;      /* 프레임 배경색 */
-}
+:root { --frame-w: 412px; }
 
-* { box-sizing: border-box; }
-html, body, #root {
-  margin: 0;
-  height: 100%;
-  background: var(--outer-bg);  /* 빈공간 대신 배경으로 채움 */
-  overflow-x: hidden;           /* 가로 스크롤 방지 */
-}
-
-/* 바깥 컨테이너: 화면 꽉 채움 */
+/* 앱 전체를 가운데 정렬 */
 .app-shell{
-  min-height: 100%;           /* 주소창 높이변동 대응 */
-  width: 100%;
-  display: flex;
-  justify-content: center;       /* 기본: 가운데 정렬 */
-  background: var(--outer-bg);   /* 양옆 배경 */
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;   /* 수평 중앙 */
+  align-items:stretch;
 }
 
-/* 프레임: 가이드 폭 */
+/* ✅ 폭 제한은 여기 한 군데만 */
 .frame{
-  width: var(--frame-w);         /* 데스크탑/넓은 화면: 412px 고정 */
-  margin: 0 auto;               /* 가운데 정렬 */
-  min-height: 100dvh;
-  background: var(--inner-bg);
-  padding-left: var(--gutter-x);
-  padding-right: var(--gutter-x);
-  overflow-y: auto;                /* 스크롤 여기서 발생 */
-  overscroll-behavior-y: contain;  /* 상단/하단 바운스 억제(선택) */
-  -webkit-overflow-scrolling: touch;
-
+  width:min(100vw, var(--frame-w));
+  min-height:100dvh;
+  margin:0 auto;
+  background:#fff;
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
 }
 
-/* 프레임 내부 요소는 프레임 너비 넘지 않게 */
-.frame * { max-width: 100%; }
+.status-bar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 16px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
 
-/* ★ 모바일(<=412px)에서는 프레임이 화면을 꽉 채우도록 */
-@media (max-width: 412px){
-  .frame{
-    width: 100vw;                /* 프레임 = 화면폭 */
-    padding-left: var(--gutter-x);
-    padding-right: var(--gutter-x);
-  }
+.status-time {
+  font-size: 18px;
+  font-weight: 500;
+  color: #111;
+}
+
+.status-icons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #111;           /* 아이콘 색상 */
+}
+
+.status-icons svg {
+  display: block;
+  height: 16px;          /* 세 아이콘 높이 통일 */
+  width: auto;
 }
