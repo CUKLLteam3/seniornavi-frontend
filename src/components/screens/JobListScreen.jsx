@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
+import Modal from './Modal';
 import '../../styles/list.css';
 
 export const JobListScreen = ({ onNavigate, onApply }) => {
@@ -7,6 +8,7 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // 임시 데이터
   useEffect(() => {
@@ -55,6 +57,18 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSave = (job) => {
+    if (onApply) {
+      onApply(job);
+    }
+
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   if (loading) {
     return (
@@ -159,11 +173,8 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
             </div>
 
             <div className="btn-box">
-              <button
-                className="btn-one"
-                onClick={() => onApply && onApply(job)}
-              >
-                지원하기
+              <button className="btn-one" onClick={() => handleSave(job)}>
+                저장하기
               </button>
               <button
                 className="btn-two"
@@ -179,6 +190,13 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
       </div>
 
       <button className="more-btn">더 많은 일자리 보기</button>
+
+      {showModal && (
+        <Modal
+          onClose={handleCloseModal}
+          onNavigate={() => onNavigate(SCREENS.HOME)}
+        />
+      )}
     </div>
   );
 };

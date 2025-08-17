@@ -131,7 +131,6 @@ function App() {
         {currentScreen === SCREENS.JOB_LIST && (
           <JobListScreen
             onNavigate={handleNavigate}
-            onBack={() => setCurrentScreen(SCREENS.HOME)}
             onApply={handleApply}
           />
         )}
@@ -139,7 +138,7 @@ function App() {
         {currentScreen === SCREENS.JOB_DETAIL && (
           <JobDetailScreen
             job={selectedJob}
-            onBack={() => setCurrentScreen(SCREENS.JOB_LIST)}
+            onNavigate={handleNavigate}
             onApply={handleApply}
             onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
@@ -149,7 +148,6 @@ function App() {
         {currentScreen === SCREENS.TRAINING_LIST && (
           <TrainingListScreen
             onNavigate={handleNavigate}
-            onBack={() => setCurrentScreen(SCREENS.HOME)}
             onApply={handleApply}
           />
         )}
@@ -157,7 +155,7 @@ function App() {
         {currentScreen === SCREENS.TRAINING_DETAIL && (
           <TrainingDetailScreen
             training={selectedTraining}
-            onBack={() => setCurrentScreen(SCREENS.TRAINING_LIST)}
+            onNavigate={handleNavigate}
             onApply={handleApply}
             onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}

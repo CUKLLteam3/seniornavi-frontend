@@ -1,7 +1,7 @@
 .title-box-d {
   display: flex;
-  gap: 36px;
-  padding-left: 22px;
+  align-items: center;
+  padding-left: 60px; /* 뒤로가기 버튼 삭제 후 조정하기 */
   margin-bottom: 16px;
 
   width: 412px;
@@ -15,7 +15,6 @@
   font-size: 24px;
   font-weight: 700;
   line-height: normal;
-  margin-top: 18px;
 }
 
 .back-btn {

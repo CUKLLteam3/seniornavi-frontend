@@ -1,18 +1,34 @@
+import { useState } from 'react';
+import { SCREENS } from '../../constants/screens';
+import Modal from './Modal';
 import '../../styles/detail.css';
 
 export const TrainingDetailScreen = ({
   training,
-  onBack,
   onApply,
+  onNavigate,
   onToggleFavorite,
   isFavorite,
 }) => {
   if (!training) return <p>선택된 교육 프로그램이 없습니다.</p>;
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSave = (training) => {
+    if (onApply) {
+      onApply(training);
+    }
+
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="pg">
       <div className="title-box-d">
-        <button className="back-btn" onClick={onBack}></button>
         <p className="title-text-d">교육 프로그램 상세</p>
       </div>
 
@@ -203,9 +219,16 @@ export const TrainingDetailScreen = ({
         </div>
       </div>
 
-      <button className="btn-3" onClick={() => onApply && onApply(training)}>
+      <button className="btn-3" onClick={() => handleSave(training)}>
         저장하기
       </button>
+
+      {showModal && (
+        <Modal
+          onClose={handleCloseModal}
+          onNavigate={() => onNavigate(SCREENS.HOME)}
+        />
+      )}
     </div>
   );
 };

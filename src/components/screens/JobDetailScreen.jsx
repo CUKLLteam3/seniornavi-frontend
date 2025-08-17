@@ -1,18 +1,34 @@
+import { useState } from 'react';
+import { SCREENS } from '../../constants/screens';
+import Modal from './Modal';
 import '../../styles/detail.css';
 
 export const JobDetailScreen = ({
   job,
-  onBack,
   onApply,
+  onNavigate,
   onToggleFavorite,
   isFavorite,
 }) => {
   if (!job) return <p>선택된 일자리가 없습니다.</p>;
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSave = (job) => {
+    if (onApply) {
+      onApply(job);
+    }
+
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="pg">
       <div className="title-box-d">
-        <button className="back-btn" onClick={onBack}></button>
         <p className="title-text-d">일자리 상세보기</p>
       </div>
 
@@ -50,7 +66,10 @@ export const JobDetailScreen = ({
           <hr></hr>
 
           <div className="condition-line-d">
-            <img style={{ padding: "2px" }} src="src/components/screens/icon/calendar-icon.svg" />
+            <img
+              style={{ padding: '2px' }}
+              src="src/components/screens/icon/calendar-icon.svg"
+            />
             <p className="sm-title">근무형태</p>
           </div>
           <p className="sm-detail">주 5일</p>
@@ -157,9 +176,16 @@ export const JobDetailScreen = ({
         <p className="xs-detail">2025년 9월 15일</p>
       </div>
 
-      <button className="btn-3" onClick={() => onApply && onApply(job)}>
+      <button className="btn-3" onClick={() => handleSave(job)}>
         지원하기
       </button>
+
+      {showModal && (
+        <Modal
+          onClose={handleCloseModal}
+          onNavigate={() => onNavigate(SCREENS.HOME)}
+        />
+      )}
     </div>
   );
 };

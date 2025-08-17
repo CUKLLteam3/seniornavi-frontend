@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
+import Modal from './Modal';
 import '../../styles/list.css';
 
 export const TrainingListScreen = ({ onNavigate, onApply }) => {
@@ -7,6 +8,7 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // 임시 데이터
   useEffect(() => {
@@ -53,6 +55,18 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
       training.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSave = (training) => {
+    if (onApply) {
+      onApply(training);
+    }
+
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   if (loading) {
     return (
       <div className="pg">
@@ -66,7 +80,6 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
 
   return (
     <div className="pg">
-
       {/* 검색 */}
       <div className="title-box">
         <p className="title-text">교육 프로그램</p>
@@ -83,7 +96,10 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
               }
             }}
           />
-          <button className="search-btn" onClick={() => setSearchTerm(searchInput)}>
+          <button
+            className="search-btn"
+            onClick={() => setSearchTerm(searchInput)}
+          >
             검색
           </button>
         </div>
@@ -91,7 +107,10 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
 
       <div className="ft-box">
         <button className="ft-btn-one">
-          <img className="ft-icon" src="src/components/screens/icon/filter-icon.png"/>
+          <img
+            className="ft-icon"
+            src="src/components/screens/icon/filter-icon.png"
+          />
           <span className="ft-text-one">상세 필터</span>
         </button>
         <button className="ft-btn-two ft-text-two">ex: 금액순</button>
@@ -116,7 +135,6 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
 
                 <div className="condition-box-t">
                   <div className="condition-line-t">
-                    
                     <img
                       className="condition-icon-t"
                       src="src/components/screens/icon/training-icon.svg"
@@ -156,19 +174,11 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
                 </div>
 
                 <p className="num">담당자: 02-1111-2222</p>
-
-                {/* <div className="des-box">
-                  <p className="des-text">{job.description}</p>
-                  <p className="des-text">{job.description}</p>
-                </div> */}
               </div>
             </div>
 
             <div className="btn-box">
-              <button
-                className="btn-one"
-                onClick={() => onApply && onApply(training)}
-              >
+              <button className="btn-one" onClick={() => handleSave(training)}>
                 저장하기
               </button>
               <button
@@ -185,6 +195,13 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
       </div>
 
       <button className="more-btn">더 많은 교육 프로그램 보기</button>
+
+      {showModal && (
+        <Modal
+          onClose={handleCloseModal}
+          onNavigate={() => onNavigate(SCREENS.HOME)}
+        />
+      )}
     </div>
   );
 };
