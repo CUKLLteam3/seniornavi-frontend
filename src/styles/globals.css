@@ -1,4 +1,5 @@
-*{
+/* 기본 리셋 */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -10,25 +11,7 @@ body {
   line-height: 1.6;
   color: #333;
   background-color: #f5f5f5;
-  margin: 0;    
-   overflow-x: hidden;  
 }
-
-:root{
-  --frame-w: 412px;   /* 모바일 프레임 */
-  --gutter-x: 19px;   /* 좌우 여백 */
-  --card-w: 374px;    /* 카드 가로 */
-  --card-h: 452px;    /* 카드 세로 */
-  --rad-4: 4px;       /* 라운드 */
-  --btn-w: 330px;     /* 버튼 가로 */
-}
-
-html, body {
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
-  width: 100%;
-  height: auto;
-}
-
 
 /* 앱 컨테이너 */
 .app-container {
