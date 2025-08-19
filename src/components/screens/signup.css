@@ -1,5 +1,5 @@
 :root{
-  --bg:#eef3ff;
+  --bg:#F6F8FB;
   --card:#ffffff;
   --text:#111827;
   --muted:#6b7280;
@@ -12,33 +12,31 @@
 .sg-page{min-height:100vh;background:var(--bg)}
 .sg-header{
   position:sticky; top:0; z-index:10;
-  background:linear-gradient(#eef3ff,#eef3ffcc);
-  backdrop-filter:saturate(1.2) blur(6px);
+  background:#ffffff;
   display:flex; align-items:center; gap:8px;
-  padding:10px 12px; border-bottom:1px solid #e6ebff;
+  padding:5px 12px; border-bottom:1px solid #e6ebff;
 }
-.sg-header h1{font-size:18px;font-weight:800;color:var(--text)}
-.sg-back{width:32px;height:32px;border-radius:999px;border:0;background:#ecf0ff;display:grid;place-items:center;cursor:pointer}
+.sg-header h1{font-size:18px;font-weight:900;color:var(--text); margin-top: 24px;}
+.sg-back{width:32px;height:32px;border-radius:999px;border:0;background:#ffffff;display:grid;place-items:left;cursor:pointer}
 
-.sg-wrap{max-width:420px;margin:0 auto;padding:16px 14px 28px}
+.sg-wrap{max-width:420px;margin:0 auto;padding:18px 18px 24px}
 
 .sg-card{
   background:var(--card);
-  border-radius:16px; box-shadow:0 8px 22px rgba(0,0,0,.06);
+  border-radius:12px; box-shadow:0 8px 22px rgba(0,0,0,.06);
   padding:16px; margin-bottom:16px;
 }
-.sg-card-title{display:flex; align-items:center; gap:8px; font-weight:800; color:var(--text); margin-bottom:12px}
+.sg-card-title{display:flex; align-items:center; gap:8px; font-weight:900; color:var(--text); margin-bottom:12px}
 .sg-desc{margin:-4px 0 12px 0; font-size:13px; color:var(--muted)}
-.sg-sep{border:0; height:1px; background:var(--line); margin-top:8px}
+.sg-sep{border:0; height:0px; background:var(--line); margin-top:8px}
 
-.sg-form{display:flex; flex-direction:column; gap:12px}
-.sg-field{}
-.sg-label{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text); font-weight:700; margin-bottom:6px}
+.sg-form{display:flex; flex-direction:column; gap:13px}
+.sg-label{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text); font-weight:900; margin-bottom:8px}
 .sg-label-icon{display:grid; place-items:center}
 
 .sg-input, .sg-select select{
-  width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px;
-  font-size:14px; outline:none; color:var(--text); background:#fff;
+  width:100%; border:0px solid var(--line); border-radius:12px; padding:12px 12px;
+  font-size:16px; outline:none; color:var(--text); background:#fff;
 }
 .sg-input::placeholder{color:#9ca3af}
 .sg-input:focus{border-color:#a8c2ff}
@@ -53,22 +51,12 @@
 .sg-select select{-webkit-appearance:none; appearance:none}
 .sg-select svg{position:absolute; right:12px; top:50%; transform:translateY(-50%)}
 
-.sg-err{margin-top:6px; font-size:12px; color:#ef4444}
 
-.sg-skill-grid{
-  display:grid; grid-template-columns:1fr 1fr; gap:10px;
-}
-.sg-skill{
-  position:relative; display:flex; align-items:center; gap:8px;
-  border:1px solid var(--line); border-radius:12px; padding:10px 12px;
-  font-size:14px; color:#374151; background:#fff; cursor:pointer; user-select:none;
-}
-.sg-skill input{position:absolute; opacity:0; pointer-events:none}
-.sg-skill.is-on{border-color:#c7d7ff; background:#f2f6ff; font-weight:700}
+
 
 .sg-check{
-  display:flex; align-items:flex-start; gap:10px;
-  border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;
+  display:flex; align-items:flex-start; gap:12px;
+  border:0px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;
   background:#fff;
 }
 .sg-check input{margin-top:3px}
@@ -77,9 +65,9 @@
 
 .sg-bottom{padding:8px 0 16px}
 .sg-submit{
-  width:100%; border:0; border-radius:12px; padding:13px 0;
-  background:linear-gradient(180deg,#6C63FF,#5B5BEF);
-  color:#fff; font-weight:800; font-size:16px; box-shadow:0 8px 20px rgba(91,91,239,.25);
+  width:100%; border:0; border-radius:8px; padding:16px 0;
+  background:#706cff;
+  color:#fff; font-weight:900; font-size:18px; 
   cursor:pointer; transition:filter .12s ease;
 }
 .sg-submit.is-disabled{opacity:.5; cursor:not-allowed}

@@ -1,7 +1,10 @@
 // src/components/screens/MyPage.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useLayoutEffect, useEffect, useMemo, useState } from "react";
 import "../../styles/mypage.css";
-import { Pencil, MapPin, Target, Wrench, Heart, FileText, ChevronRight } from "lucide-react";
+import {
+  Pencil, MapPin, Target, Wrench, Heart, FileText, ChevronRight,
+  Mail, Phone, Lock
+} from "lucide-react";
 
 import {
   getResume,
@@ -12,6 +15,8 @@ import {
 } from "../../utils/mypage";
 
 import Modal from "./Modal.jsx";
+
+const DEBUG = true;
 
 export default function MyPage({ onLogout, onNavigate }) {
   // 로그인 유저 (id 없으면 임시 1)
@@ -29,13 +34,48 @@ export default function MyPage({ onLogout, onNavigate }) {
 
   // 모달
   const [openResume, setOpenResume] = useState(false);
-  const resumeText = useMemo(
-    () => (typeof resume === "string" ? resume : JSON.stringify(resume ?? {}, null, 2)),
-    [resume]
-  );
+
+  // 응답 형태 상관없이 텍스트로 표시
+  const resumeText = useMemo(() => {
+    if (!resume) return "";
+    if (Array.isArray(resume)) return resume.join("\n");
+    if (typeof resume === "string") return resume;
+    try { return JSON.stringify(resume, null, 2); } catch { return String(resume); }
+  }, [resume]);
+
   useEffect(() => { document.body.style.overflow = openResume ? "hidden" : ""; }, [openResume]);
 
-  // 버튼 스타일(컴포넌트 내부에 선언)
+  // 🔹 모달 위치/너비 상태 (필수)
+  const [resumePos, setResumePos] = useState({ left: 24, top: 100, width: 380 });
+
+  // 🔹 왼쪽 컬럼 위치에 맞춰 모달 카드 배치
+  useLayoutEffect(() => {
+    if (!openResume) return;
+
+    const update = () => {
+      const col = document.getElementById("mypage-left");
+      if (col) {
+        const r = col.getBoundingClientRect();
+        setResumePos({
+          left: Math.round(r.left + window.scrollX + 12), // 좌측 여백
+          top:  Math.round(r.top  + window.scrollY + 12), // 상단 여백
+          width: Math.min(Math.round(r.width - 24), 420), // 컬럼폭-여백, 최대 420
+        });
+      } else {
+        setResumePos(p => ({ ...p, left: 20, top: 80 }));
+      }
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [openResume]);
+
+  // 버튼 스타일
   const btnPrimary = {
     background: "#4F46E5",
     color: "#fff",
@@ -57,23 +97,44 @@ export default function MyPage({ onLogout, onNavigate }) {
     fontSize: 14,
   };
 
+  // ===== 유틸: 응답에서 배열 안전 추출 (배열 | {ok,data} | {data:{list:[]}} 등)
+  const extractArray = (v) => {
+    if (Array.isArray(v)) return v;
+    if (Array.isArray(v?.data)) return v.data;
+    if (Array.isArray(v?.items)) return v.items;
+    if (Array.isArray(v?.data?.items)) return v.data.items;
+    return [];
+  };
+  // ===== 유틸: 이력서 응답 추출 (배열/문자/객체 모두 허용)
+  const extractResume = (v) => {
+    if (v?.ok !== undefined && v?.data !== undefined) return v.data;
+    return v;
+  };
+
   // 데이터 로드 (일부 실패해도 나머지 표시)
   const load = async () => {
     setLoading(true);
     setErr("");
-    const [a, b, c] = await Promise.allSettled([
-      getResume(userId),
-      getSavedRecruits(userId),
-      getSavedEducation(userId),
-    ]);
-    if (a.status === "fulfilled") setResume(a.value); else setResume(null);
-    if (b.status === "fulfilled") setRecruits(Array.isArray(b.value) ? b.value : []); else setRecruits([]);
-    if (c.status === "fulfilled") setEducations(Array.isArray(c.value) ? c.value : []); else setEducations([]);
-    const fails = [a, b, c].filter((x) => x.status === "rejected").length;
-    if (fails === 3) setErr("마이페이지 데이터를 불러오지 못했어요.");
-    setLoading(false);
+    try {
+      DEBUG && console.log("[MyPage] load for userId:", userId);
+      const [a, b, c] = await Promise.allSettled([
+        getResume(userId),
+        getSavedRecruits(userId),
+        getSavedEducation(userId),
+      ]);
+      DEBUG && console.log("[MyPage] results:", { a, b, c });
+
+      if (a.status === "fulfilled") setResume(extractResume(a.value)); else setResume(null);
+      if (b.status === "fulfilled") setRecruits(extractArray(b.value)); else setRecruits([]);
+      if (c.status === "fulfilled") setEducations(extractArray(c.value)); else setEducations([]);
+
+      const fails = [a, b, c].filter((x) => x.status === "rejected").length;
+      if (fails === 3) setErr("마이페이지 데이터를 불러오지 못했어요.");
+    } finally {
+      setLoading(false);
+    }
   };
-  useEffect(() => { load(); }, [userId]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [userId]);
 
   // 삭제 (403이면 개발 모드로 로컬만 삭제)
   const removeRecruit = async (sn) => {
@@ -163,8 +224,16 @@ export default function MyPage({ onLogout, onNavigate }) {
         <p className="mypg__subtitle">내 이력과 활동 관리</p>
       </div>
 
-      <main className="mypg__content">
-        {/* 1) 내 이력 */}
+      {/* 🔹 이 main이 '왼쪽 컬럼' 이므로 id 부여 */}
+      <main id="mypage-left" className="mypg__content">
+        {/* 1) 내 기본정보 (마스킹 + 전부보기) */}
+        <BasicInfoCard
+          email={user?.email || ""}
+          phone={user?.phone || ""}
+          password={user?.password || ""}
+        />
+
+        {/* 2) 내 이력 */}
         <section className="card-box">
           <Row icon={<Pencil size={18} />} title="내 이력" />
           <Divider />
@@ -180,7 +249,7 @@ export default function MyPage({ onLogout, onNavigate }) {
           <button
             className="row link"
             onClick={() => {
-              if (!resume) return alert("자소서 데이터가 없습니다.");
+              if (!resumeText) return alert("자소서 데이터가 없습니다.");
               setOpenResume(true);
             }}
             style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0 }}
@@ -245,16 +314,22 @@ export default function MyPage({ onLogout, onNavigate }) {
 
         <div style={{ height: 12 }} />
 
-        {/* ── 자소서 모달 (스크린샷 동일 스타일) ── */}
+        {/* ── 자소서 모달 ── */}
         <Modal open={openResume} onClose={() => setOpenResume(false)}>
-          {/* 카드 */}
+          {/* 카드: 왼쪽 컬럼 좌표에 고정 */}
           <div
             style={{
+              position: "fixed",
+              left: resumePos.left,
+              top: resumePos.top,
+              width: resumePos.width,
               background: "#fff",
               borderRadius: 14,
               padding: 30,
-              margin: "10px 15px 15px",
+              boxShadow: "0 20px 40px rgba(0,0,0,.12)",
+              margin: 0,
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* 제목 */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
@@ -300,13 +375,13 @@ export default function MyPage({ onLogout, onNavigate }) {
                   if (typeof onNavigate === "function") onNavigate("home");
                   setOpenResume(false);
                 }}
-                style={{...btnPrimary, borderRadius: 4 }}
+                style={{ ...btnPrimary, borderRadius: 6, fontSize: 18, fontWeight: 900 }}
               >
                 홈으로 가기
               </button>
               <button
                 onClick={() => setOpenResume(false)}
-                style={{...btnGhost, borderRadius: 4 }}
+                style={{ ...btnGhost, borderRadius: 6, fontSize: 18, fontWeight: 900 }}
               >
                 내 정보 가기
               </button>
@@ -345,5 +420,141 @@ function MiniCard({ title, r2Left, r2Right, r3Left, r3Right, btnText = "보기",
       </div>
       <button className="mini__btn" onClick={onClick}>{btnText}</button>
     </div>
+  );
+}
+
+/* ───────── 기본정보 카드 + 마스킹 (FIXED) ───────── */
+
+function maskEmail(email = "") {
+  const at = email.indexOf("@");
+  if (at === -1) return email;
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  const dot = domain.indexOf(".");
+  if (dot === -1) return `${local}@xxxx`;
+  const tld = domain.slice(dot); // ".com", ".co.kr" 등 그대로
+  return `${local}@xxxx${tld}`;
+}
+function digitsOnly(v = "") { return (v + "").replace(/\D/g, ""); }
+function formatPhoneFull(phone = "") {
+  const d = digitsOnly(phone);
+  if (d.length >= 11) return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
+  if (d.length === 10)  return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6, 10)}`;
+  return phone || "-";
+}
+function maskPhone(phone = "") {
+  const d = digitsOnly(phone);
+  // 요구: 010 뒤 1번째, 5번째 숫자만 공개 → 010-2xxxx-4xxxx
+  if (d.startsWith("010") && d.length >= 11) {
+    const firstAfter010 = d[3] ?? "";
+    const fifthAfter010 = d[7] ?? "";
+    return `010-${firstAfter010}${"x".repeat(4)}-${fifthAfter010}${"x".repeat(4)}`;
+  }
+  return "010-" + "x".repeat(5) + "-" + "x".repeat(5);
+}
+function maskPassword(pw = "") {
+  if (!pw) return "x".repeat(8);
+  const head = pw.slice(0, 3);
+  return head + "x".repeat(Math.max(0, pw.length - 3));
+}
+
+function BasicInfoCard({ email = "", phone = "", password = "" }) {
+  const [openAll, setOpenAll] = useState(false);
+  const [sheetPos, setSheetPos] = useState({ left: 24, top: 100, width: 360 });
+
+  // 배경 스크롤 잠금
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = openAll ? "hidden" : prev || "";
+    return () => { document.body.style.overflow = prev; };
+  }, [openAll]);
+
+  // 모달: #mypage-left 기준으로 위치 고정
+  useLayoutEffect(() => {
+    if (!openAll) return;
+    const update = () => {
+      const col = document.getElementById("mypage-left");
+      if (col) {
+        const r = col.getBoundingClientRect();
+        setSheetPos({
+          left: Math.round(r.left + window.scrollX + 12),
+          top:  Math.round(r.top  + window.scrollY + 12),
+          width: Math.min(Math.round(r.width - 24), 420),
+        });
+      } else {
+        setSheetPos(p => ({ ...p, left: 20, top: 80 }));
+      }
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [openAll]);
+
+  const maskedEmail = useMemo(() => maskEmail(email), [email]);
+  const maskedPhone = useMemo(() => maskPhone(phone), [phone]);
+  const maskedPw    = useMemo(() => maskPassword(password), [password]);
+
+  return (
+    <>
+      <section className="card-box">
+        <Row icon={<Pencil size={18} />} title="내 기본정보" />
+        <Divider />
+        <Row icon={<Mail size={18} />} title="내 메일" sub={maskedEmail} />
+        <Divider />
+        <Row icon={<Phone size={18} />} title="내 전화번호" sub={maskedPhone} />
+        <Divider />
+        <Row icon={<Lock size={18} />} title="내 비밀번호" sub={maskedPw} />
+
+        <div style={{ display: "flex", justifyContent: "flex-end", padding: "6px 8px 8px" }}>
+          <button
+            style={{
+              border: 0, background: "#574fe0", color: "#fff",
+              fontSize: 16, fontWeight: 900, padding: "8px 8px",
+              borderRadius: 12, cursor: "pointer",
+            }}
+            onClick={() => setOpenAll(true)}
+          >
+            전부 보기
+          </button>
+        </div>
+      </section>
+
+      <Modal open={openAll} onClose={() => setOpenAll(false)}>
+        <div
+          style={{
+            position: "fixed",
+            left: sheetPos.left,
+            top: sheetPos.top,
+            width: sheetPos.width,
+            background: "#fff",
+            padding: 24,
+            boxShadow: "0 12px 30px rgba(0,0,0,.15)",
+            zIndex: 60,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Row icon={<Pencil size={18} />} title="내 기본정보" />
+          <Divider />
+          <Row icon={<Mail size={18} />}  title="내 메일"     sub={email || "-"} />
+          <Divider />
+          <Row icon={<Phone size={18} />} title="내 전화번호" sub={formatPhoneFull(phone)} />
+          <Divider />
+          <Row icon={<Lock size={18} />}  title="내 비밀번호" sub={password || "-"} />
+
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
+            <button
+              onClick={() => setOpenAll(false)}
+              style={{ background: "#574fe0", color: "#fff", border: 0, padding: "10px 14px", borderRadius: 10, fontWeight: 900 }}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }

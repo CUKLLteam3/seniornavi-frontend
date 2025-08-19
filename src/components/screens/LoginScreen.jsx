@@ -1,27 +1,20 @@
-import { useMemo, useState } from "react";
+// src/components/screens/LoginScreen.jsx
+import { useState } from "react";
 import "./login.css";
-// ✅ 더미 로그인 API 불러오기
-import { login } from "../../utils/auth";
+import { login } from "../../utils/auth"; // login({ email, password }) 형태로 동작하도록 준비
+import logoPenguin from "/src/assets/이력_등록하기.webp";
 
 export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
-  const [tab, setTab] = useState("password"); // 'password' | 'sms'(비활성)
-  const [phone, setPhone] = useState("");
+  const [tab] = useState("password"); // 'password' | 'sms'(비활성)
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");     // ✅ 에러 메시지 상태
+  const [error, setError] = useState("");
 
-  // 010-1234-5678 포맷 표시
-  const formattedPhone = useMemo(() => {
-    const d = phone.replace(/\D/g, "");
-    if (d.length <= 3) return d;
-    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
-    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
-  }, [phone]);
+  // 간단한 이메일 유효성 체크
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  const canSubmit = tab === "password" && emailValid && password.length >= 4 && !loading;
 
-  const phoneValid = /^01[016789]-?\d{3,4}-?\d{4}$/.test(phone);
-  const canSubmit = tab === "password" && phoneValid && password.length >= 4 && !loading;
-
-  // ✅ 실제 로그인 흐름(지금은 mock 호출)
   async function handleSubmit(e) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -29,11 +22,8 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
     setError("");
 
     try {
-      // 전화번호는 숫자만 전달
-      const rawPhone = phone.replace(/\D/g, "");
-      // { token, user } 형태로 반환됨 (auth.mock.js)
-      const data = await login({ phone: rawPhone, password });
-      // 부모로 전달 → App.jsx에서 localStorage 저장 + 홈으로 전환
+      // { token, user } 형태로 반환된다고 가정
+      const data = await login({ email, password });
       onLogin?.(data);
     } catch (err) {
       setError(err?.message || "로그인에 실패했어요");
@@ -42,23 +32,13 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
     }
   }
 
-  // (선택) 카카오 버튼은 그대로 유지
-  function handleKakao() {
-    if (loading) return;
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onLogin?.({ token: "kakao-fake", user: { name: "카카오유저" } });
-    }, 400);
-  }
-
   return (
     <div className="rf-page">
       <div className="rf-wrap">
         {/* 로고 배지 */}
-        <div className="rf-logo-card">
-          <div className="rf-logo-grad">
-            <span className="rf-emoji">🛫</span>
+        <div className="rf-logo-badge">
+          <div className="rf-logo-inner">
+            <img src={logoPenguin} alt="Re-fly 로고" />
           </div>
         </div>
 
@@ -105,35 +85,23 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
           </div>
           <p className="rf-card-sub">안전하고 간편한 로그인</p>
 
-          {/* 탭 */}
-          <div className="rf-tabs">
-            <button
-              type="button"
-              onClick={() => setTab("password")}
-              className={`rf-tab ${tab === "password" ? "is-active" : ""}`}
-            >
-              휴대폰
-            </button>
-            <button type="button" className="rf-tab" disabled title="SMS 인증 준비 중">
-              SMS 인증
-            </button>
-          </div>
-
           {/* 폼 */}
           <form onSubmit={handleSubmit} className="rf-form">
             <div className="rf-field">
-              <label>휴대폰 번호</label>
+              <label>이메일</label>
               <input
-                type="tel"
-                name="phone"
-                value={formattedPhone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="010-1234-5678"
-                className={`rf-input ${phone && !phoneValid ? "rf-error" : ""}`}
-                inputMode="tel"
-                autoComplete="tel"
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="example@email.com"
+                className={`rf-input ${email && !emailValid ? "rf-error" : ""}`}
+                autoComplete="email"
+                inputMode="email"
               />
-              {phone && !phoneValid && <div className="rf-help-err">휴대폰 번호 형식이 올바르지 않습니다.</div>}
+              {email && !emailValid && (
+                <div className="rf-help-err">이메일 형식이 올바르지 않습니다.</div>
+              )}
             </div>
 
             <div className="rf-field">
@@ -149,7 +117,7 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
               />
             </div>
 
-            {/* ✅ 에러 메시지 */}
+            {/* 에러 메시지 */}
             {error && <div className="rf-help-err" style={{ marginTop: 4 }}>{error}</div>}
 
             <button
@@ -166,15 +134,6 @@ export default function LoginScreen({ onLogin, onSignup, onForgotPassword }) {
           <button onClick={onSignup} className="rf-btn rf-btn-primary">
             회원가입하기
           </button>
-        </div>
-
-        {/* 하단 안내 */}
-        <div className="rf-footer">
-          <p><b>개인정보 보호:</b> 모든 정보는 암호화되어 안전하게 처리됩니다</p>
-          <p><b>고객센터:</b> 로그인에 어려움이 있으면 언제든 문의하세요</p>
-          <div className="rf-links">
-            <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a> | <a href="#">고객센터</a>
-          </div>
         </div>
       </div>
     </div>

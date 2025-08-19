@@ -1,10 +1,10 @@
 :root{
-  --bg:#eef3ff;
+  --bg:#F6F8FB;
   --card:#ffffff;
-  --text:#111827;
+  --text:#333333;
   --muted:#6b7280;
-  --primary:#4F46E5; /* 회원가입 버튼 */
-  --violet:#5B5BEF;  /* "시니어 취업 플랫폼" */
+  --primary:#433cff; /* 회원가입 버튼 */
+  --violet:#705CFF;  /* "시니어 취업 플랫폼" */
   --line:#e5e7eb;
   --soft:#e9ecf2;
 }
@@ -23,47 +23,29 @@
   flex-direction:column;
 }
 
-/* 로고 */
-.rf-logo-card{
-  width:max-content;
-  margin:0 auto;
-  background:var(--card);
-  border-radius:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-.rf-logo-grad{
-  width:64px;height:64px;
-  margin:12px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#6ea8ff 0%, #7ef1e5 100%);
-  display:grid;place-items:center;
-}
-.rf-emoji{ font-size:28px; }
-
 /* 타이틀 */
 .rf-title{ text-align:center; margin-top:12px; }
 .rf-title h1{
   font-size:45px; line-height:1.2;
-  font-weight:700; color:var(--text);
+  font-weight:900; color:var(--text);
 }
-.rf-sub1{ margin-top:4px; font-size:20px; font-weight:500; line-height:18px; color:#374151; }
-.rf-sub2{ font-size:20px; line-height:50px; font-weight:800; color:var(--violet); }
+.rf-sub1{ margin-top:4px; font-size:20px; font-weight:900; line-height:18px; color:#374151; }
+.rf-sub2{ font-size:20px; line-height:50px; font-weight:900; color:var(--violet); }
 
 /* 포인트 라인 */
 .rf-points{
   margin-top:16px;
   display:flex; align-items:center; justify-content:center;
-  gap:16px; white-space:nowrap; font-size:15px;
+  gap:16px; white-space:nowrap; font-size:15px; font-weight:900;
 }
 .rf-point{ display:flex; align-items:center; gap:6px; color:#374151; }
 .rf-icon{ vertical-align:middle; }
 
 /* 카드 */
 .rf-card{
-  margin-top:20px;
+  margin-top:34px;
   background:var(--card);
   border-radius:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08);
   padding:16px;
 }
 
@@ -72,21 +54,21 @@
   display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:1px;
 }
 .rf-card-title h2{
-  font-size:24px; font-weight:700; color:var(--text);
+  font-size:24px; font-weight:900; color:var(--text);
 }
 .rf-badge{
   width:20px;height:20px; border-radius:50%;
   display:grid;place-items:center;
   background:#ecfdf5; color:#059669;
 }
-.rf-card-sub{ text-align:center; color:#6b7280; font-size:15px; margin-bottom:12px; }
+.rf-card-sub{ text-align:center; color:#6b7280; font-size:15px; font-weight:900; margin-bottom:15px; }
 
 /* 탭 */
-.rf-tabs{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.rf-tabs{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:15px; }
 .rf-tab{
   padding:10px 0; border:1px solid var(--line);
   border-radius:12px; background:#fff; color:#374151;
-  font-size:17px; font-weight:600;
+  font-size:17px; font-weight:900;
 }
 .rf-tab[disabled]{ color:#9ca3af; background:#fff; }
 .rf-tab.is-active{
@@ -94,15 +76,15 @@
 }
 
 /* 폼 */
-.rf-form{ display:flex; flex-direction:column; gap:12px; }
+.rf-form{ display:flex; flex-direction:column; gap:15px; }
 
 .rf-field label{
-  display:block; margin-bottom:6px; font-size:15px; color:#374151; font-weight:600;
+  display:block; margin-bottom:12px; font-size:15px; color:#000000; font-weight:900;
 }
 .rf-input{
   width:100%; border:1px solid var(--line); background:#fff;
-  border-radius:12px; padding:10px 12px;
-  font-size:15px; font-weight:700; color:#111827; outline:none;
+  border-radius:12px; padding:12px 14px;
+  font-size:16px; font-weight:700; color:#111827; outline:none;
 }
 .rf-input:focus{ border-color:#7aa8ff; }
 .rf-input.rf-error{ border-color:#f87171; }
@@ -110,8 +92,8 @@
 
 /* 버튼 */
 .rf-btn{
-  width:100%; border:0; border-radius:12px; padding:12px 0;
-  font-size:16px; font-weight:700; cursor:pointer;
+  width:100%; border:0; border-radius:10px; padding:12px 0;
+  font-size:16px; font-weight:900; cursor:pointer;
   transition:filter .12s ease;
 }
 .rf-btn:disabled{ cursor:not-allowed; opacity:.9; }
@@ -120,20 +102,35 @@
 .rf-btn-gray:hover{ filter:brightness(.97); }
 .rf-btn-gray.is-disabled{ color:#b6bdc9; }
 
-.rf-divider{
-  display:flex; align-items:center; gap:8px;
-  color:#9ca3af; margin:16px 0; font-size:12px;
-}
 
-
-.rf-center-txt{ margin-top:20px;  margin-bottom: 20px; text-align:center; color:#6b7280; font-size:15px; }
+.rf-center-txt{ margin-top:28px;  margin-bottom: 28px; text-align:center; color:#6b7280; font-size:15px; font-weight:900; }
 
 .rf-btn-primary{ background:var(--primary); color:#fff; }
 .rf-btn-primary:hover{ filter:brightness(.96); }
 
-/* 푸터 */
-.rf-footer{
-  margin-top:16px; text-align:center; color:#6b7280; font-size:10px; line-height:1.6; 
+/* 로고 배지 바깥(보라 그라데이션 사각형) */
+.rf-logo-badge{
+  width: 84px;
+  height: 84px;
+  border-radius: 22px;
+  background: #433CFF;
+  display: grid;
+  place-items: center;
+  margin: 8px auto 12px; 
 }
-.rf-footer .rf-links{ margin-top:6px;}
-.rf-footer a{ color:#2563eb; text-decoration:underline; margin: 0 12px;}
+
+.rf-logo-inner{
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+}
+
+/* 실제 사진 */
+.rf-logo-inner img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 사진을 꽉 차게 */
+  display: block;
+}
+

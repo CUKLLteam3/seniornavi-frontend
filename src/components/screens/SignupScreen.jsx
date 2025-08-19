@@ -10,66 +10,78 @@ export default function SignupScreen({ onBack, onSignup }) {
   const [pw2, setPw2] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
-  const [name, setName] = useState("홍길동");
-  const [phone, setPhone] = useState("010-1234-5678");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [birth, setBirth] = useState("");
   const [gender, setGender] = useState("");
-  const [address, setAddress] = useState("서울시 강남구 역삼동");
-
-  // 학력/경력
-  const [edu, setEdu] = useState("");
-  const [career, setCareer] = useState("");
-
-  // 보유 기술 (체크박스)
-  const skillList = [
-    "Microsoft Office","데이터 분석","고객 상담","영어 회화","컴퓨터 활용","인터넷 검색",
-    "소셜미디어","온라인 쇼핑몰","요리","청소","정리정돈","간병",
-    "육아","반려동물 돌봄","운전","배송","택배","경비","관리","상품 진열",
-  ];
-  const [skills, setSkills] = useState(new Set());
-  const toggleSkill = (s) => {
-    const next = new Set(skills);
-    if (next.has(s)) next.delete(s); else next.add(s);
-    setSkills(next);
-  };
+  const [address, setAddress] = useState("");
 
   // 약관 동의
   const [agreeTos, setAgreeTos] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
 
-  // 유효성
+  // ===== 유효성 =====
   const phoneDigits = useMemo(() => phone.replace(/\D/g, ""), [phone]);
   const phoneValid = /^01[016789]\d{7,8}$/.test(phoneDigits);
-  const emailValid = /^\S+@\S+\.\S+$/.test(email);
+
+  // 이메일 정리(NFKC 정규화 + 제로폭 제거 + trim)
+  const cleanEmail = useMemo(
+    () =>
+      String(email ?? "")
+        .normalize("NFKC")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .trim(),
+    [email]
+  );
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
+
   const pwValid = pw.length >= 6 && pw === pw2;
-  const canSubmit = emailValid && pwValid && name.trim() && phoneValid && agreeTos && agreePrivacy;
+
+  const canSubmit =
+    emailValid &&
+    pwValid &&
+    name.trim().length > 0 &&
+    phoneValid &&
+    agreeTos &&
+    agreePrivacy;
 
   const formattedPhone = useMemo(() => {
     const d = phoneDigits;
     if (d.length <= 3) return d;
-    if (d.length <= 7) return `${d.slice(0,3)}-${d.slice(3)}`;
-    return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7,11)}`;
+    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
+    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
   }, [phoneDigits]);
 
   // ✅ 로딩/에러
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
-  async function handleSubmit(e){
-    e.preventDefault();
+  async function handleSubmit(e) {
+    e?.preventDefault?.();
     if (!canSubmit || loading) return;
 
     setErr("");
     setLoading(true);
     try {
-      // mock API는 name/phone/password만 사용
+      // 🔴 핵심 수정: email도 함께 전달!
       const data = await signup({
         name: name.trim(),
-        phone: phoneDigits,     // 숫자만
+        email: cleanEmail,     // <-- 추가
         password: pw,
+        phone: phoneDigits,    // 숫자만
       });
-      // ✅ App.jsx에서 onSignup -> handleSignupSuccess -> handleLogin 으로 자동 로그인됨
-      onSignup?.(data);
+
+      // 로그인 화면 프리필(편의)
+      sessionStorage.setItem(
+        "loginPrefill",
+        JSON.stringify({ email: cleanEmail, phone: phoneDigits })
+      );
+
+      // 회원가입 완료 후 로그인 화면으로 이동
+      if (typeof onBack === "function") onBack();
+
+      // 필요하면 후처리 콜백
+      // onSignup?.(data);
     } catch (e) {
       setErr(e?.message || "회원가입에 실패했어요");
     } finally {
@@ -82,7 +94,7 @@ export default function SignupScreen({ onBack, onSignup }) {
       {/* 헤더 */}
       <header className="sg-header">
         <button className="sg-back" onClick={onBack} aria-label="뒤로가기">
-          <ArrowLeft/>
+          <ArrowLeft />
         </button>
         <h1>회원가입</h1>
       </header>
@@ -91,148 +103,169 @@ export default function SignupScreen({ onBack, onSignup }) {
         {/* 카드: 기본 정보 */}
         <section className="sg-card">
           <div className="sg-card-title">
-            <IconUser/><span>기본 정보</span>
+            <IconUser />
+            <span>기본 정보</span>
           </div>
 
-          <form className="sg-form" onSubmit={handleSubmit}>
+          <form className="sg-form" onSubmit={handleSubmit} noValidate>
             {/* 이메일 */}
-            <Field label="이메일" icon={<IconMail/>}>
-              <input className="sg-input" type="email" placeholder="example@email.com"
-                     value={email} onChange={(e)=>setEmail(e.target.value)}/>
-              {!emailValid && email && <div className="sg-err">올바른 이메일 형식이 아닙니다.</div>}
+            <Field label="이메일" icon={<IconMail />}>
+              <input
+                className="sg-input"
+                type="email"
+                placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                inputMode="email"
+                autoComplete="email"
+                aria-invalid={!!cleanEmail && !emailValid}
+              />
+              {!emailValid && cleanEmail && (
+                <div className="sg-err">올바른 이메일 형식이 아닙니다.</div>
+              )}
             </Field>
 
             {/* 비밀번호 */}
-            <Field label="비밀번호" >
+            <Field label="비밀번호">
               <div className="sg-input-wrap">
-                <input className="sg-input" type={showPw ? "text" : "password"} placeholder="6자 이상 입력해주세요"
-                       value={pw} onChange={(e)=>setPw(e.target.value)} />
-                <button type="button" className="sg-icon-btn" onClick={()=>setShowPw(v=>!v)} aria-label="비밀번호 보기">
-                  <IconEye open={showPw}/>
+                <input
+                  className="sg-input"
+                  type={showPw ? "text" : "password"}
+                  placeholder="6자 이상 입력해주세요"
+                  value={pw}
+                  onChange={(e) => setPw(e.target.value)}
+                  autoComplete="new-password"
+                  aria-invalid={!!pw && pw.length < 6}
+                />
+                <button
+                  type="button"
+                  className="sg-icon-btn"
+                  onClick={() => setShowPw((v) => !v)}
+                  aria-label="비밀번호 보기"
+                >
+                  <IconEye open={showPw} />
                 </button>
               </div>
-              {pw && pw.length<6 && <div className="sg-err">비밀번호는 6자 이상이어야 합니다.</div>}
+              {pw && pw.length < 6 && (
+                <div className="sg-err">비밀번호는 6자 이상이어야 합니다.</div>
+              )}
             </Field>
 
             {/* 비밀번호 확인 */}
             <Field label="비밀번호 확인">
               <div className="sg-input-wrap">
-                <input className="sg-input" type={showPw2 ? "text" : "password"} placeholder="비밀번호를 다시 입력해주세요"
-                       value={pw2} onChange={(e)=>setPw2(e.target.value)} />
-                <button type="button" className="sg-icon-btn" onClick={()=>setShowPw2(v=>!v)} aria-label="비밀번호 보기">
-                  <IconEye open={showPw2}/>
+                <input
+                  className="sg-input"
+                  type={showPw2 ? "text" : "password"}
+                  placeholder="비밀번호를 다시 입력해주세요"
+                  value={pw2}
+                  onChange={(e) => setPw2(e.target.value)}
+                  autoComplete="new-password"
+                  aria-invalid={!!pw2 && pw !== pw2}
+                />
+                <button
+                  type="button"
+                  className="sg-icon-btn"
+                  onClick={() => setShowPw2((v) => !v)}
+                  aria-label="비밀번호 보기"
+                >
+                  <IconEye open={showPw2} />
                 </button>
               </div>
-              {pw2 && pw !== pw2 && <div className="sg-err">비밀번호가 일치하지 않습니다.</div>}
+              {pw2 && pw !== pw2 && (
+                <div className="sg-err">비밀번호가 일치하지 않습니다.</div>
+              )}
             </Field>
 
             {/* 이름 */}
             <Field label="이름">
-              <input className="sg-input" type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="이름을 입력해주세요"/>
+              <input
+                className="sg-input"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="홍길동"
+                autoComplete="name"
+              />
             </Field>
 
             {/* 전화번호 */}
-            <Field label="전화번호" icon={<IconPhone/>}>
-              <input className="sg-input" type="tel" value={formattedPhone}
-                     onChange={(e)=>setPhone(e.target.value)} placeholder="010-1234-5678" />
-              {!phoneValid && phone && <div className="sg-err">휴대폰 번호 형식이 올바르지 않습니다.</div>}
+            <Field label="전화번호" icon={<IconPhone />}>
+              <input
+                className="sg-input"
+                type="tel"
+                value={formattedPhone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="010-1234-5678"
+                inputMode="numeric"
+                autoComplete="tel"
+                aria-invalid={!!phone && !phoneValid}
+              />
+              {!phoneValid && phone && (
+                <div className="sg-err">휴대폰 번호 형식이 올바르지 않습니다.</div>
+              )}
             </Field>
 
             {/* 생년월일 */}
-            <Field label="생년월일" icon={<IconCalendar/>}>
-              <input className="sg-input" type="date" value={birth} onChange={(e)=>setBirth(e.target.value)} placeholder="년-월-일"/>
+            <Field label="생년월일" icon={<IconCalendar />}>
+              <input
+                className="sg-input"
+                type="date"
+                value={birth}
+                onChange={(e) => setBirth(e.target.value)}
+                placeholder="년-월-일"
+                autoComplete="bday"
+              />
             </Field>
 
             {/* 성별 */}
             <Field label="성별">
               <div className="sg-select">
-                <select value={gender} onChange={(e)=>setGender(e.target.value)}>
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
                   <option value="">성별을 선택해주세요</option>
                   <option value="male">남성</option>
                   <option value="female">여성</option>
                   <option value="none">선택 안 함</option>
                 </select>
-                <ChevronDown/>
+                <ChevronDown />
               </div>
             </Field>
 
             {/* 주소 */}
-            <Field label="주소" icon={<IconLocation/>}>
-              <input className="sg-input" type="text" value={address} onChange={(e)=>setAddress(e.target.value)} placeholder="주소를 입력해주세요"/>
+            <Field label="주소" icon={<IconLocation />}>
+              <input
+                className="sg-input"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="서울시 강남구 역삼동"
+                autoComplete="street-address"
+              />
             </Field>
 
             {/* 카드 구분선 */}
-            <hr className="sg-sep"/>
+            <hr className="sg-sep" />
 
             {/* (폼 하단에 에러 노출) */}
-            {err && <div className="sg-err" style={{marginTop:8}}>{err}</div>}
+            {err && <div className="sg-err" style={{ marginTop: 8 }}>{err}</div>}
           </form>
-        </section>
-
-        {/* 카드: 학력 및 경력 */}
-        <section className="sg-card">
-          <div className="sg-card-title">
-            <IconCap/><span>학력 및 경력</span>
-          </div>
-
-          <div className="sg-form">
-            <Field label="최종 학력" icon={<IconHat/>}>
-              <div className="sg-select">
-                <select value={edu} onChange={(e)=>setEdu(e.target.value)}>
-                  <option value="">학력을 선택해주세요</option>
-                  <option value="element">초등학교 졸업</option>
-                  <option value="middle">중학교 졸업</option>
-                  <option value="high">고등학교 졸업</option>
-                  <option value="college">전문대학 졸업</option>
-                  <option value="univ">대학교 졸업</option>
-                  <option value="master">대학원 졸업</option>
-                </select>
-                <ChevronDown/>
-              </div>
-            </Field>
-
-            <Field label="경력" icon={<IconBag/>}>
-              <div className="sg-select">
-                <select value={career} onChange={(e)=>setCareer(e.target.value)}>
-                  <option value="">경력을 선택해주세요</option>
-                  <option value="none">신입 (경력 없음)</option>
-                  <option value="1">1년 미만</option>
-                  <option value="1-3">1~3년</option>
-                  <option value="3-5">3~5년</option>
-                  <option value="5-10">5~10년</option>
-                  <option value="10+">10년 이상</option>
-                </select>
-                <ChevronDown/>
-              </div>
-            </Field>
-          </div>
-        </section>
-
-        {/* 카드: 보유 기술 및 능력 */}
-        <section className="sg-card">
-          <div className="sg-card-title">
-            <IconSkill/><span>보유 기술 및 능력</span>
-          </div>
-          <p className="sg-desc">해당하는 기술이나 능력을 모두 선택해주세요</p>
-
-          <div className="sg-skill-grid">
-            {skillList.map((s) => (
-              <label key={s} className={`sg-skill ${skills.has(s) ? "is-on" : ""}`}>
-                <input type="checkbox" checked={skills.has(s)} onChange={()=>toggleSkill(s)} />
-                <span>{s}</span>
-              </label>
-            ))}
-          </div>
         </section>
 
         {/* 카드: 약관 동의 */}
         <section className="sg-card">
           <div className="sg-card-title">
-            <IconDoc/><span>약관 동의</span>
+            <span>약관 동의</span>
           </div>
 
           <label className="sg-check">
-            <input type="checkbox" checked={agreeTos} onChange={(e)=>setAgreeTos(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={agreeTos}
+              onChange={(e) => setAgreeTos(e.target.checked)}
+            />
             <div>
               <strong>(필수) 이용약관 동의</strong>
               <p>Re-fly 서비스 이용약관에 동의합니다.</p>
@@ -240,7 +273,11 @@ export default function SignupScreen({ onBack, onSignup }) {
           </label>
 
           <label className="sg-check">
-            <input type="checkbox" checked={agreePrivacy} onChange={(e)=>setAgreePrivacy(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={agreePrivacy}
+              onChange={(e) => setAgreePrivacy(e.target.checked)}
+            />
             <div>
               <strong>(필수) 개인정보 처리방침 동의</strong>
               <p>개인정보 수집 및 이용에 동의합니다.</p>
@@ -251,8 +288,9 @@ export default function SignupScreen({ onBack, onSignup }) {
         {/* 제출 버튼 */}
         <div className="sg-bottom">
           <button
-            className={`sg-submit ${!canSubmit || loading ? "is-disabled":""}`}
+            className={`sg-submit ${!canSubmit || loading ? "is-disabled" : ""}`}
             disabled={!canSubmit || loading}
+            type="button"
             onClick={handleSubmit}
           >
             {loading ? "가입 중..." : "회원가입 완료"}

@@ -1,13 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "/src/styles/survey-base.css";
 import "/src/styles/survey-wizard.css";
+import { saveSurvey } from "../../utils/survey";
 
 const TOTAL = 8;
 const PROGRESS = [13, 25, 35, 50, 63, 72, 88, 100];
 const STORAGE_KEY = "surveyWizard.v1";
 
+// Q15 기본 칩(‘기타’ 제거)
+const BASE_JOBS = ["경비/관리","미화/청소","조리/음식","사무보조","요양보조"];
+
 export default function SurveyWizard({ onBackHome, onSubmitDone }) {
   const [step, setStep] = useState(1);
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     // step1
     name: "", birth: "", gender: "", phone: "",
@@ -27,6 +32,7 @@ export default function SurveyWizard({ onBackHome, onSubmitDone }) {
     suggestions: "",
   });
 
+  // ---- 로컬스토리지 복원/저장 ----
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -66,17 +72,17 @@ export default function SurveyWizard({ onBackHome, onSubmitDone }) {
       case 1:
         return has(form.name) && has(form.birth) && has(form.gender) && has(form.phone);
       case 2:
-        return has(form.district) && form.transport.length > 0 && has(form.distance);
+        return has(form.district) && (form.transport?.length > 0) && has(form.distance);
       case 3:
-        return has(form.health) && has(form.commuteTime) && has(form.workDays) && form.considerations.length > 0;
+        return has(form.health) && has(form.commuteTime) && has(form.workDays) && (form.considerations?.length > 0);
       case 4:
-        return has(form.mainCareer) && form.certs.length > 0 && has(form.computer);
+        return has(form.mainCareer) && (form.certs?.length > 0) && has(form.computer);
       case 5:
-        return form.desiredJobs.length > 0 && has(form.workType) && has(form.desiredPay);
+        return (form.desiredJobs?.length > 0) && has(form.workType) && has(form.desiredPay);
       case 6:
-        return form.eduCompleted.length > 0 && form.supportNeeds.length > 0;
+        return (form.eduCompleted?.length > 0) && (form.supportNeeds?.length > 0);
       case 7:
-        return form.workHelp.length > 0;
+        return (form.workHelp?.length > 0);
       case 8:
         return has(form.suggestions);
       default:
@@ -84,10 +90,91 @@ export default function SurveyWizard({ onBackHome, onSubmitDone }) {
     }
   }, [step, form]);
 
-  const handleSubmit = () => {
-    if (!isStepValid) return;
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  // 동적 옵션: 기본 + 선택된 값 중 사용자 추가 항목
+  const jobOptions = useMemo(() => {
+    const customs = (form.desiredJobs || []).filter((j) => !BASE_JOBS.includes(j));
+    return [...BASE_JOBS, ...customs];
+  }, [form.desiredJobs]);
+
+  // ---- userId 가져오기 ----
+  const getUid = () => {
+    try {
+      const raw = localStorage.getItem("user");
+      const u = raw ? JSON.parse(raw) : null;
+      return u?.id;
+    } catch { return undefined; }
+  };
+
+  // ---- 백엔드 스펙에 맞게 페이로드 매핑 ----
+  const toApiPayload = (f) => {
+    const birthYear =
+      Number.isInteger(f.birth) ? f.birth :
+      parseInt(String(f.birth ?? "").replace(/\D/g, ""), 10) || undefined;
+
+  
+  const handleSubmit = async () => {
+  if (!isStepValid) return;
+
+  const uid = (import.meta.env.DEV ? 1 : currentUser?.id) ?? 1; // dev에선 1번 고정
+  const res = await saveSurvey(uid, form);
+
+  if (res.ok) {
+    alert("설문이 저장되었습니다!");
     onSubmitDone?.(form);
+  } else if (res.offlineSaved) {
+    alert("서버 준비 중이라 임시로 저장했어요. 배포되면 자동으로 붙습니다.");
+    onSubmitDone?.(form);
+  } else {
+    alert(`설문 저장 실패 (status: ${res.status ?? "?"})`);
+  }
+};
+    return {
+      name: f.name,
+      birthYear,
+      gender: f.gender,
+      phone: f.phone,
+      region: f.district,                 // district -> region
+      transports: f.transport,            // 배열/문자 모두 허용 (saveSurvey가 조인)
+      commuteDistance: f.distance,
+      healthStatus: f.health,
+      workHours: f.commuteTime,           // commuteTime -> workHours
+      workDays: f.workDays,
+      considerations: f.considerations,
+      career: f.mainCareer,               // mainCareer -> career
+      certificates: f.certs,              // certs -> certificates
+      digitalSkill: f.computer,           // computer -> digitalSkill
+      jobPreferences: f.desiredJobs,      // desiredJobs -> jobPreferences
+      workTypes: f.workType,              // workType -> workTypes
+      wagePreference: f.desiredPay,       // desiredPay -> wagePreference
+      educationInterests: f.eduCompleted, // eduCompleted -> educationInterests
+      supportNeeds: f.supportNeeds,
+      appHelps: f.workHelp,               // workHelp -> appHelps
+      opinion: f.suggestions,             // suggestions -> opinion
+    };
+  };
+
+  // ---- 제출 핸들러: API 호출 연결 ----
+  const handleSubmit = async () => {
+    if (!isStepValid || saving) return;
+
+    const userId = getUid();
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const payload = toApiPayload(form);
+      await saveSurvey(userId, payload); // POST /api/profile/{userId}
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      onSubmitDone?.(form); // 필요 없다면 응답 데이터로 바꿔도 됨
+    } catch (err) {
+      console.error(err);
+      alert(`설문 저장 실패${err?.status ? ` (${err.status})` : ""}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -162,7 +249,15 @@ export default function SurveyWizard({ onBackHome, onSubmitDone }) {
 
         {step === 5 && (
           <Section title="희망하는 일자리를 알려주세요">
-            <ChipGroup label="Q15. 희망 직무 (복수선택 가능)" mode="multi" value={form.desiredJobs} onChange={(vals)=>setVal("desiredJobs", vals)} options={["경비/관리","미화/청소","조리음식","사무보조","요양보조","기타"]}/>
+            {/* Q15: 칩 + 입력칩(Enter로 추가) */}
+            <ChipGroupWithInput
+              label="Q15. 희망 직무 (복수선택 가능)"
+              value={form.desiredJobs}
+              onChange={(vals)=> setVal("desiredJobs", vals)}
+              options={jobOptions}
+              placeholder="원하는 직무 입력"
+            />
+
             <ChipGroup label="Q16. 희망 근무 형태(복수선택 가능)" mode="single" value={form.workType} onChange={(v)=>setVal("workType", v)} options={["주중 근무","주말 근무","야간 근무","장기","단기"]}/>
             <ChipGroup label="Q17. 희망 시급 수준" mode="single" value={form.desiredPay} onChange={(v)=>setVal("desiredPay", v)} options={["최저시급","만2천원","만4천원","만6천원"]}/>
             <Actions step={step} onNext={goNext} onPrev={goPrev} canNext={isStepValid} />
@@ -193,7 +288,14 @@ export default function SurveyWizard({ onBackHome, onSubmitDone }) {
               onChange={(v)=>setVal("suggestions", v)}
             />
             <div className="sv-actions" style={{ marginTop: 16 }}>
-              <button className="btn primary w100" onClick={handleSubmit} disabled={!isStepValid}>제출하기</button>
+              <button
+                className="btn primary w100"
+                onClick={handleSubmit}
+                disabled={!isStepValid || saving}
+                type="button"
+              >
+                {saving ? "저장 중..." : "제출하기"}
+              </button>
             </div>
           </Section>
         )}
@@ -291,6 +393,65 @@ function ChipGroup({ label, mode = "multi", value, onChange, options }) {
             {opt}
           </button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* === 칩 + 입력칩 컴포넌트 (Enter로 추가, 버튼 없음) === */
+function ChipGroupWithInput({ label, value = [], onChange, options, placeholder = "원하는 직무 입력" }) {
+  const [text, setText] = useState("");
+
+  const isActive = (opt) => Array.isArray(value) && value.includes(opt);
+
+  const toggle = (opt) => {
+    const set = new Set(value || []);
+    set.has(opt) ? set.delete(opt) : set.add(opt);
+    onChange([...set]);
+  };
+
+  const addFromInput = () => {
+    const name = text.trim();
+    if (!name) return;
+    if (!value.includes(name)) onChange([...(value || []), name]);
+    setText("");
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addFromInput();
+    }
+  };
+
+  return (
+    <div className="field">
+      <label className="fl">{label}</label>
+      <div className="chips" role="group" aria-label={label}>
+        {options.map((opt) => (
+          <button
+            key={opt}
+            type="button"
+            className={"chip" + (isActive(opt) ? " active" : "")}
+            aria-pressed={isActive(opt)}
+            onClick={() => toggle(opt)}
+          >
+            {opt}
+          </button>
+        ))}
+
+        {/* 입력칩: .chip 스타일을 그대로 사용, 내부 input만 보이게 */}
+        <div className="chip chip--input">
+          <input
+            className="chip-input"
+            type="text"
+            value={text}
+            onChange={(e)=>setText(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            maxLength={20}
+          />
+        </div>
       </div>
     </div>
   );

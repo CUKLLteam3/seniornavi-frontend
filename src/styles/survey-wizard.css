@@ -40,3 +40,20 @@
   display:flex; flex-direction:column; align-items:center; margin-top:35px;
 }
 .sv-actions .btn + .btn{ margin-top:14px; }
+
+/* 입력칩만 대상 */
+.chips .chip--input { padding: 0; }
+
+.chips .chip--input .chip-input{
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 150px;          /* 필요시 조정 */
+  font-size: 18px;       /* ← 글씨만 작게 */
+  line-height: 1.7;      /* 잘림 방지 */
+  padding: 8px 12px;     /* 다른 칩과 동일 여백 */
+}
+
+.chips .chip--input .chip-input::placeholder{
+  font-size: 18px;       /* placeholder도 동일 크기 */
+}
