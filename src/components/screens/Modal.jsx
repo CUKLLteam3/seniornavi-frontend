@@ -1,12 +1,12 @@
 import { SCREENS } from '../../constants/screens';
 import '../../styles/modal.css';
 
-const Modal = ({ onClose, onNavigate }) => {
+const Modal = ({ onNavigate, onClose, message }) => {
   return (
     <div className="modal-backdrop">
       <div className="modal">
         <img src="src/components/screens/icon/modal-logo.png" width={"142px"}/>
-        <p className="modal-text">저장이 완료되었습니다!</p>
+        <p className="modal-text">{message}</p>
 
         <button className="modal-btn1" onClick={() => onNavigate(SCREENS.HOME)}>
           홈으로 가기

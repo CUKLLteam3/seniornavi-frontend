@@ -2,74 +2,78 @@ import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
 import Modal from './Modal';
 import '../../styles/list.css';
+import api from '../../utils/api';
+import { makeWantListPayload } from '../../utils/mapping';
 
-export const JobListScreen = ({ onNavigate, onApply }) => {
+export const JobListScreen = ({ onNavigate }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [surveyData, setSurveyData] = useState(null);
+  const [modalMessage, setModalMessage] = useState('');
 
-  // 임시 데이터
   useEffect(() => {
-    setTimeout(() => {
-      setJobs([
-        {
-          id: 'job1',
-          title: '부천시청 민원도우미',
-          company: '부천시청',
-          location: '부천시 원미구',
-          salary: '12,000원 (시급)',
-          type: '시간제',
-          description: '시민들의 민원 접수 및 안내 업무',
-          workingHours: '09:00-13:00',
-          distance: '1.2km',
-        },
-        {
-          id: 'job2',
-          title: '학교 급식 도우미',
-          company: '부천초등학교',
-          location: '부천시 소사구',
-          salary: '월 80만원',
-          type: '시간제',
-          description: '초등학교 급식 준비 및 배식 보조',
-          workingHours: '10:00-14:00',
-          distance: '2.1km',
-        },
-        {
-          id: 'job3',
-          title: '도서관 사서 보조',
-          company: '부천시립도서관',
-          location: '부천시 오정구',
-          salary: '시급 11,500원',
-          type: '시간제',
-          description: '도서 정리 및 이용자 안내',
-          workingHours: '13:00-17:00',
-          distance: '3.5km',
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const getJobList = async () => {
+      try {
+        // 설문 내역 불러오기
+        const surveyRes = await api.get('/api/profile/1');
+        const survey = surveyRes.data || null;
+        setSurveyData(survey);
+
+        // 설문 유무에 따른 일자리 목록 불러오기
+        let jobRes;
+        if (survey) {
+          const payload = makeWantListPayload(survey);
+          console.log('✅ 보낼 설문 답변:', payload);
+          jobRes = await api.post('/recruit/wantlist', payload);
+          console.log('✅ wantlist API 응답 성공:', jobRes.data);
+        } else {
+          jobRes = await api.get('/recruit/list');
+          console.log('✅ list API 응답 성공:', jobRes.data);
+        }
+
+        setJobs(jobRes.data);
+      } catch (err) {
+        console.error('❌ API 호출 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getJobList();
   }, []);
 
-  const filteredJobs = jobs.filter(
-    (job) =>
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 관심 목록에 저장하기 (이미 저장된 공고인지 확인 후에 저장)
+  const handleSave = async (job) => {
+    try {
+      const savedRes = await api.get('/recruit/1');
+      const savedSnList = savedRes.data || [];
+      const alreadySaved = savedSnList.includes(job.recrutPblntSn);
 
-  const handleSave = (job) => {
-    if (onApply) {
-      onApply(job);
+      if (alreadySaved) {
+        console.log('✅ 이미 저장된 공고', job.recrutPblntSn);
+        setModalMessage('이미 저장된 공고입니다.');
+      } else {
+        await api.post('/recruit/save', { userId: 1, sn: job.recrutPblntSn });
+        console.log('✅ 관심 목록 저장 성공', job.recrutPblntSn);
+        setModalMessage('저장이 완료되었습니다!');
+      }
+
+      setShowModal(true);
+    } catch (err) {
+      console.error('❌ 관심 목록 저장 실패', err);
+      alert('관심 목록 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
-
-    setShowModal(true);
   };
 
+  // 모달 닫는 거 관리
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
+  // 로딩 화면
   if (loading) {
     return (
       <div className="pg">
@@ -81,11 +85,29 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
     );
   }
 
+  // 검색
+  const filteredJobs = jobs.filter(
+    (job) =>
+      job.recrutPbancTtl.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.instNm.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="pg">
-      {/* 검색 */}
       <div className="title-box">
-        <p className="title-text">일자리 찾기</p>
+        <div>
+          <p className="title-text">일자리 찾기</p>
+          <p className="title-text-sv">
+            {surveyData ? (
+              <>
+                등록하신 이력을 기반으로{' '}
+                <span className="title-text-sv2">추천</span>할게요!
+              </>
+            ) : (
+              <>이력을 등록해주시면 추천을 받을 수 있어요!</>
+            )}
+          </p>
+        </div>
         <div className="search-items">
           <input
             type="text"
@@ -108,93 +130,110 @@ export const JobListScreen = ({ onNavigate, onApply }) => {
         </div>
       </div>
 
-      <div className="ft-box">
-        <button className="ft-btn-one">
-          <img
-            className="ft-icon"
-            src="src/components/screens/icon/filter-icon.png"
-          />
-          <span className="ft-text-one">상세 필터</span>
-        </button>
-        <button className="ft-btn-two ft-text-two">ex: 금액순</button>
-      </div>
       <div className="len-latest-box">
         <p className="ft-len-text">전체 {filteredJobs.length}개</p>
-        <button className="latest">최신순</button> {/* 아직 미구현 */}
       </div>
 
-      {/* 일자리 목록 */}
       <div>
-        {filteredJobs.map((job) => (
-          <div key={job.id} className="list-card">
-            <div>
-              <div className="card-text">
-                <div className="card-title-box">
-                  <p className="card-title">{job.title}</p>
-                  <p className="work-type">파트타임</p>
-                </div>
+        {filteredJobs.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="sm-title">등록한 이력이나 선택한 조건에 맞는</p>
+            <p className="sm-title">일자리가 없습니다.</p>
+            <button
+              className="btn-list"
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const res = await api.get('/recruit/list');
+                  setJobs(res.data);
+                  console.log('✅ 전체 일자리 불러오기 성공')
+                } catch (err) {
+                  console.error('❌ 전체 일자리 불러오기 실패:', err);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
+              전체 일자리 목록 보기
+            </button>
+          </div>
+        ) : (
+          filteredJobs.map((job) => (
+            <div key={job.recrutPblntSn} className="list-card">
+              <div>
+                <div className="card-text">
+                  <div className="card-title-box">
+                    <p className="card-title">{job.recrutPbancTtl}</p>
+                    <p className="work-type">
+                      {job.hireTypeNmLst.split(',')[0]}
+                    </p>
+                  </div>
 
-                <div className="company-box">
-                  <div className="company-box-in">
-                    <img
-                      className="company-icon"
-                      src="src/components/screens/icon/company-icon.svg"
-                    />
-                    <p className="card-company">{job.company}</p>
+                  <div className="company-box">
+                    <div className="company-box-in">
+                      <img
+                        className="company-icon"
+                        src="src/components/screens/icon/company-icon.svg"
+                      />
+                      <p className="card-company">{job.instNm}</p>
+                    </div>
                   </div>
-                  <p className="company-type">중소기업</p>
-                </div>
-                <div className="salary-box">
-                  <p className="card-salary">{job.salary}</p>
-                  <p className="working-days">주5일근무</p>
-                </div>
 
-                <div className="condition-box">
-                  <div className="condition-line">
-                    <img
-                      className="condition-icon"
-                      src="src/components/screens/icon/location-icon.svg"
-                    />
-                    <p className="condition-text">{job.location}</p>
+                  <div className="condition-box">
+                    <div className="condition-line">
+                      <img
+                        className="condition-icon"
+                        src="src/components/screens/icon/location-icon.svg"
+                      />
+                      <p className="condition-text">{job.workRgnNmLst}</p>
+                    </div>
                   </div>
-                  <div className="condition-line">
-                    <img
-                      className="condition-icon"
-                      src="src/components/screens/icon/time-icon.svg"
-                    />
-                    <p className="condition-text">{job.workingHours}</p>
+                  <div className="des-box">
+                    <p className="des-text">
+                      경력: {job.recrutSeNm} · 학력: {job.acbgCondNmLst}
+                    </p>
+                    <p className="des-text">
+                      등록일: {''}
+                      {job.pbancBgngYmd
+                        ? `${job.pbancBgngYmd.slice(0, 4)}년
+                      ${job.pbancBgngYmd.slice(4, 6)}월
+                      ${job.pbancBgngYmd.slice(6, 8)}일`
+                        : ''}
+                      · 마감일: {''}
+                      {job.pbancEndYmd
+                        ? `${job.pbancEndYmd.slice(0, 4)}년
+                      ${job.pbancEndYmd.slice(4, 6)}월
+                      ${job.pbancEndYmd.slice(6, 8)}일`
+                        : ''}
+                    </p>
                   </div>
-                </div>
-                <div className="des-box">
-                  <p className="des-text">{job.description}</p>
-                  <p className="des-text">{job.description}</p>
                 </div>
               </div>
-            </div>
 
-            <div className="btn-box">
-              <button className="btn-one" onClick={() => handleSave(job)}>
-                저장하기
-              </button>
-              <button
-                className="btn-two"
-                onClick={() =>
-                  onNavigate && onNavigate(SCREENS.JOB_DETAIL, job)
-                }
-              >
-                상세보기
-              </button>
+              <div className="btn-box">
+                <button className="btn-one" onClick={() => handleSave(job)}>
+                  저장하기
+                </button>
+                <button
+                  className="btn-two"
+                  onClick={() =>
+                    onNavigate &&
+                    onNavigate(SCREENS.JOB_DETAIL, job.recrutPblntSn)
+                  }
+                >
+                  상세보기
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-
-      <button className="more-btn">더 많은 일자리 보기</button>
 
       {showModal && (
         <Modal
+          onNavigate={onNavigate}
           onClose={handleCloseModal}
-          onNavigate={() => onNavigate(SCREENS.HOME)}
+          message={modalMessage}
         />
       )}
     </div>

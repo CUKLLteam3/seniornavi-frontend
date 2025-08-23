@@ -1,30 +1,73 @@
-import { useState } from 'react';
-import { SCREENS } from '../../constants/screens';
+import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import '../../styles/detail.css';
+import api from '../../utils/api';
 
-export const TrainingDetailScreen = ({
-  training,
-  onApply,
-  onNavigate,
-  onToggleFavorite,
-  isFavorite,
-}) => {
-  if (!training) return <p>선택된 교육 프로그램이 없습니다.</p>;
-
+export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
+  const [training, setTraining] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
-  const handleSave = (training) => {
-    if (onApply) {
-      onApply(training);
+  // 교육 상세 불러오기
+  useEffect(() => {
+    const getTrainingDetail = async () => {
+      try {
+        const res = await api.get(`/api/educations/${trainingId}`);
+        console.log('✅ API 응답 성공', res.data);
+        setTraining(res.data);
+      } catch (err) {
+        console.error('❌ API 호출 실패:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getTrainingDetail();
+  }, [trainingId]);
+
+  // 관심 목록에 저장하기 (이미 저장된 교육인지 확인 후에 저장)
+  const handleSave = async (training) => {
+    try {
+      const savedRes = await api.get('/api/mypage/saved-educations?userId=1&expand=ids');
+      const savedIdList = savedRes.data || [];
+      const alreadySaved = savedIdList.includes(training.id);
+
+      if (alreadySaved) {
+        console.log('✅ 이미 저장된 교육', training.id);
+        setModalMessage('이미 저장된 교육입니다.');
+      } else {
+        await api.post('/api/educations/save', {
+          userId: 1,
+          educationId: training.id,
+        });
+        console.log('✅ 관심 목록 저장 성공', training.id);
+        setModalMessage('저장이 완료되었습니다!');
+      }
+
+      setShowModal(true);
+    } catch (err) {
+      console.error('❌ 관심 목록 저장 실패', err);
+      alert('관심 목록 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
-
-    setShowModal(true);
   };
 
+  // 모달 닫는 함수
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  // 로딩 화면
+  if (loading) {
+    return (
+      <div className="pg">
+        <div className="text-center py-8">
+          <div className="text-4xl mb-4">⏳</div>
+          <p>교육 상세보기를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pg">
@@ -40,8 +83,8 @@ export const TrainingDetailScreen = ({
             height={'47px'}
           />
           <div className="job-com-text-box">
-            <p className="detail-title">{training.title}</p>
-            <p className="job-company">{training.company}</p>
+            <p className="job-title">{training.title}</p>
+            <p className="job-company">{training.providerName}</p>
           </div>
         </div>
       </div>
@@ -49,22 +92,14 @@ export const TrainingDetailScreen = ({
       <div className="j-card-2">
         <p className="sub-title mb-6">과정개요</p>
 
-        <div className="">
-          <div>
-            <p className="sm-detail mb-1">훈련목표</p>
-            <p className="xs-detail mb-4">
-              스마트폰 기본 조작 및 앱 활용 능력 향상
-            </p>
-          </div>
-          <div>
-            <p className="sm-detail mb-1">과정소개</p>
-            <p className="xs-detail mb-4">
-              스마트폰 기본 조작부터 카카오톡, 인터넷 사용법까지 체계적으로 학습
-            </p>
-          </div>
+        <div>
           <div>
             <p className="sm-detail mb-1">부제목</p>
-            <p className="xs-detail">디지털 시대, 스마트폰으로 소통하기</p>
+            <p className="xs-detail mb-4">{training.subTitle}</p>
+          </div>
+          <div>
+            <p className="sm-detail mb-1">교육대상</p>
+            <p className="xs-detail">{training.trainTarget}</p>
           </div>
         </div>
       </div>
@@ -81,18 +116,9 @@ export const TrainingDetailScreen = ({
             />
             <div>
               <p className="sm-detail mb-1">교육기간</p>
-              <p className="xs-detail">{training.period}</p>
-            </div>
-          </div>
-
-          <div className="sche-line mb-4">
-            <img
-              className="sche-icon"
-              src="src/components/screens/icon/time-icon.svg"
-            />
-            <div>
-              <p className="sm-detail mb-1">교육시간</p>
-              <p className="xs-detail">{training.hours}</p>
+              <p className="xs-detail">
+                {training.startDate} ~ {training.endDate}
+              </p>
             </div>
           </div>
 
@@ -103,7 +129,7 @@ export const TrainingDetailScreen = ({
             />
             <div>
               <p className="sm-detail mb-1">교육장소</p>
-              <p className="xs-detail">서울특별시 강남구 학습로 123</p>
+              <p className="xs-detail">{training.address}</p>
             </div>
           </div>
         </div>
@@ -112,54 +138,39 @@ export const TrainingDetailScreen = ({
       <div className="j-card-2">
         <p className="sub-title mb-6">수강정보</p>
 
-        <div className="">
-          <p className="sm-detail mb-1">수강 신청 현황</p>
-
-          <progress
-            value="15" // 현재 신청 인원
-            max="20" // 정원
-            style={{ width: '100%', accentColor: '#7565ffff' }}
-          ></progress>
-
-          <div className="flex gap-3 mb-6">
-            <div
-              style={{
-                flex: 1,
-                border: '1px solid #e5e5e5',
-                borderRadius: '7px',
-                padding: '15px',
-                height: '85px',
-                backgroundColor: '#F8F9FB',
-              }}
-            >
-              <div className="mini-line">
-                <img src="src/components/screens/icon/user2-icon.png" />
-                <p className="xs-detail">정원</p>
-              </div>
-
-              <p className="mini-text">20명</p>
+        <div>
+          <div className="flex gap-3">
+            <div className="condition-line">
+              <img
+                className=""
+                src="src/components/screens/icon/user-icon.svg"
+                width={'25px'}
+                height={'28px'}
+              />
+              <p className="sm-detail">모집 정원</p>
             </div>
-
-            <div
-              style={{
-                flex: 1,
-                border: '1px solid #e5e5e5',
-                borderRadius: '7px',
-                padding: '15px',
-                height: '85px',
-                backgroundColor: '#F8F9FB',
-              }}
-            >
-              <div className="mini-line">
-                $ <p className="xs-detail">수강료</p>
-              </div>
-
-              <p className="mini-text">{training.cost}</p>
-            </div>
+            <p className="mini-text">{training.regCourseMan}명</p>
           </div>
-          <div>
-            <p className="sm-detail mb-1">교육대상</p>
-            <p className="xs-detail">{training.target}</p>
+
+          <div className="flex gap-3">
+            <div className="condition-line">
+              <img
+                src="src/components/screens/icon/user2-icon.svg"
+                width={'21px'}
+                height={'26px'}
+                style={{ marginLeft: '2px' }}
+              />
+              <p className="sm-detail">현재 신청인원</p>
+            </div>
+            <p className="mini-text">{training.yardMan}명</p>
+          </div>
+
+          <div className="flex gap-3">
+            <div className="condition-line">
+              <p className="sm-detail-nm">$</p>
+              <p className="sm-detail-nm">수강료</p>
+            </div>
+            <p className="mini-text">{training.courseFee.toLocaleString()}원</p>
           </div>
         </div>
       </div>
@@ -168,28 +179,13 @@ export const TrainingDetailScreen = ({
         <p className="sub-title mb-6">교육기관 정보</p>
 
         <div>
-          <div className="mini-line gap-2">
-            <img
-              src="src/components/screens/icon/company-icon.svg"
-              width={'23px'}
-              height={'23px'}
-            />
-            <p className="sm-detail mb-1">기관명</p>
+          <div className="flex mb-2">
+            <img src="src/components/screens/icon/company-icon.svg" />
+            <p className="sm-detail-nm">기관명</p>
           </div>
-          <p className="xs-detail">{training.company}</p>
+          <p className="xs-detail mb-6">{training.providerName}</p>
 
           <div className="mini-card">
-            <div className="flex justify-between">
-              <div className="icon-text">
-                <img
-                  className="user-icon"
-                  src="src/components/screens/icon/user-icon.svg"
-                />
-                <p className="sm-detail">담당자</p>
-              </div>
-              <p className="xs-detail">김관리</p>
-            </div>
-
             <div className="flex justify-between">
               <div className="icon-text">
                 <img
@@ -198,7 +194,7 @@ export const TrainingDetailScreen = ({
                 />
                 <p className="sm-detail">연락처</p>
               </div>
-              <p className="xs-detail">02-1234-5678</p>
+              <p className="xs-detail">{training.telNo}</p>
             </div>
 
             <div className="flex justify-between">
@@ -210,8 +206,8 @@ export const TrainingDetailScreen = ({
                 <p className="sm-detail">홈페이지</p>
               </div>
               <p className="link">
-                <a href="https://likelion.net/" target="_blank">
-                  https://likelion.net/
+                <a href={training.homepage} target="_blank">
+                  {training.homepage}
                 </a>
               </p>
             </div>
@@ -225,8 +221,9 @@ export const TrainingDetailScreen = ({
 
       {showModal && (
         <Modal
+          onNavigate={onNavigate}
           onClose={handleCloseModal}
-          onNavigate={() => onNavigate(SCREENS.HOME)}
+          message={modalMessage}
         />
       )}
     </div>

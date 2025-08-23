@@ -15,7 +15,6 @@ import { JobListScreen } from './components/screens/JobListScreen';
 import { JobDetailScreen } from './components/screens/JobDetailScreen';
 import { TrainingListScreen } from './components/screens/TrainingListScreen';
 import { TrainingDetailScreen } from './components/screens/TrainingDetailScreen';
-import { RecResultScreen } from './components/screens/RecResultScreen';
 import { BottomNavigation } from './components/layout/BottomNavigation';
 import { VoiceGuide } from './components/layout/VoiceGuide';
 
@@ -137,7 +136,7 @@ function App() {
 
         {currentScreen === SCREENS.JOB_DETAIL && (
           <JobDetailScreen
-            job={selectedJob}
+            jobId={selectedJob}
             onNavigate={handleNavigate}
             onApply={handleApply}
             onToggleFavorite={handleToggleFavorite}
@@ -154,17 +153,11 @@ function App() {
         
         {currentScreen === SCREENS.TRAINING_DETAIL && (
           <TrainingDetailScreen
-            training={selectedTraining}
+            trainingId={selectedTraining}
             onNavigate={handleNavigate}
             onApply={handleApply}
             onToggleFavorite={handleToggleFavorite}
             isFavorite={isFavorite}
-          />
-        )}
-
-        {currentScreen === SCREENS.REC_RESULT && (
-          <RecResultScreen
-            onNavigate={handleNavigate}
           />
         )}
 

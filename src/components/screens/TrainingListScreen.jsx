@@ -2,71 +2,162 @@ import { useState, useEffect } from 'react';
 import { SCREENS } from '../../constants/screens';
 import Modal from './Modal';
 import '../../styles/list.css';
+import api from '../../utils/api';
+import { programMap, areaMap, gbnMap } from '../../utils/mapping';
 
-export const TrainingListScreen = ({ onNavigate, onApply }) => {
+export const TrainingListScreen = ({ onNavigate }) => {
   const [trainings, setTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
-  // 임시 데이터
-  useEffect(() => {
-    setTimeout(() => {
-      setTrainings([
-        {
-          id: 'training1',
-          title: '시니어를 위한 스마트폰 기초 활용',
-          company: '평생학습관',
-          location: '부천시 원미구',
-          period: '9/15 - 10/13',
-          hours: '총 32시간 (16일)',
-          target: '만 50세 이상',
-          cost: '무료',
-        },
-        {
-          id: 'training2',
-          title: '건강한 한식요리 교실',
-          company: '문화센터',
-          location: '부천시 원미구',
-          period: '9/20 - 11/1',
-          hours: '총 48시간 (24일)',
-          target: '요리에 관심있는 시니어',
-          cost: '50,000원',
-        },
-        {
-          id: 'training3',
-          title: '컴퓨터 기초 및 인터넷 활용',
-          company: '직업전문학교',
-          location: '부천시 원미구',
-          period: '9/10 - 11/29',
-          hours: '총 80시간 (40일)',
-          target: '컴퓨터 초보자',
-          cost: '300,000원',
-        },
-      ]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('');
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filterOptions, setFilterOptions] = useState([]);
+  const [tempChecked, setTempChecked] = useState([]);
+  const [appliedFilter, setAppliedFilter] = useState([]);
+
+  // 교육 목록 불러오기
+  const getTrainingList = async () => {
+    setLoading(true);
+    try {
+      const query = new URLSearchParams();
+      query.append('program', 'both');
+
+      if (appliedFilter.length > 0) {
+        const { area1, gbn } = getQueryParams(appliedFilter);
+        if (area1) query.append('area1', area1);
+        if (gbn) query.append('gbn', gbn);
+      }
+
+      if (searchTerm) query.append('keyword', searchTerm);
+
+      const url = query.toString()
+        ? `/api/educations?${query.toString()}`
+        : '/api/educations';
+      console.log('✅ 호출한 url:', url);
+      const res = await api.get(url);
+      setTrainings(res.data);
+      console.log('✅ API 응답 성공:', res.data);
+    } catch (err) {
+      console.error('❌ API 호출 실패:', err);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, []);
-
-  const filteredTrainings = trainings.filter(
-    (training) =>
-      training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      training.company.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleSave = (training) => {
-    if (onApply) {
-      onApply(training);
     }
-
-    setShowModal(true);
   };
 
+  useEffect(() => {
+    getTrainingList();
+  }, [appliedFilter, searchTerm]);
+
+  // 상세조건 다루는 함수
+  const handleFilterSelect = (filter) => {
+    setSelectedFilter(filter);
+
+    switch (filter) {
+      case '지역':
+        setFilterOptions(['서울', '경기', '인천']);
+        break;
+      case '훈련':
+        setFilterOptions([
+          '일반과정',
+          '인터넷과정',
+          '혼합과정',
+          '스마트혼합훈련',
+        ]);
+        break;
+      default:
+        setFilterOptions([]);
+    }
+
+    setTempChecked([]);
+    setShowFilterModal(true);
+  };
+
+  // 체크박스 핸들러
+  const handleTempCheck = (option) => {
+    setTempChecked((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option]
+    );
+  };
+
+  // 모달 열릴 때 기존 적용 조건 있으면 체크 표시
+  useEffect(() => {
+    if (showFilterModal) {
+      setTempChecked([...appliedFilter]);
+    }
+  }, [showFilterModal]);
+
+  // 적용 버튼 핸들러
+  const handleApplyFilter = () => {
+    setAppliedFilter(tempChecked);
+    setShowFilterModal(false);
+    setShowDropdown(false);
+  };
+
+  // 적용된 조건 제거 버튼 핸들러
+  const handleRemoveAppliedFilter = (item) => {
+    setAppliedFilter((prev) => prev.filter((i) => i !== item));
+  };
+
+  // 상세조건 쿼리파라미터 배열 생성
+  const getQueryParams = (appliedFilter) => {
+    let program = 'both';
+    let area1 = [];
+    let gbn = [];
+
+    appliedFilter.forEach((filter) => {
+      if (programMap[filter]) program = programMap[filter];
+      if (areaMap[filter]) area1.push(areaMap[filter]);
+      if (gbnMap[filter]) gbn.push(gbnMap[filter]);
+    });
+
+    return {
+      program: program,
+      area1: area1.join(',') || null,
+      gbn: gbn.join(',') || null,
+    };
+  };
+
+  // 관심 목록에 저장하기 (이미 저장된 교육인지 확인 후에 저장)
+  const handleSave = async (training) => {
+    try {
+      const savedRes = await api.get(
+        '/api/mypage/saved-educations?userId=1&expand=ids'
+      );
+      const savedIdList = savedRes.data || [];
+      const alreadySaved = savedIdList.includes(training.id);
+
+      if (alreadySaved) {
+        console.log('✅ 이미 저장된 교육', training.id);
+        setModalMessage('이미 저장된 교육입니다.');
+      } else {
+        await api.post('/api/educations/save', {
+          userId: 1,
+          educationId: training.id,
+        });
+        console.log('✅ 관심 목록 저장 성공', training.id);
+        setModalMessage('저장이 완료되었습니다!');
+      }
+
+      setShowModal(true);
+    } catch (err) {
+      console.error('❌ 관심 목록 저장 실패', err);
+      alert('관심 목록 저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
+
+  // 저장 모달 닫기 핸들러
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
+  // 로딩 화면
   if (loading) {
     return (
       <div className="pg">
@@ -78,9 +169,15 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
     );
   }
 
+  // 검색
+  const filteredTrainings = trainings.filter(
+    (training) =>
+      training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      training.address.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="pg">
-      {/* 검색 */}
       <div className="title-box">
         <p className="title-text">교육 프로그램</p>
         <div className="search-items">
@@ -103,104 +200,174 @@ export const TrainingListScreen = ({ onNavigate, onApply }) => {
             검색
           </button>
         </div>
-      </div>
 
-      <div className="ft-box">
-        <button className="ft-btn-one">
-          <img
-            className="ft-icon"
-            src="src/components/screens/icon/filter-icon.png"
-          />
-          <span className="ft-text-one">상세 필터</span>
-        </button>
-        <button className="ft-btn-two ft-text-two">ex: 금액순</button>
-      </div>
-      <div className="len-latest-box">
-        <p className="ft-len-text">전체 {filteredTrainings.length}개</p>
-        <button className="latest">인기순</button> {/* 아직 미구현 */}
-      </div>
+        {/* 상세조건 */}
+        <div>
+          <div className="ft-box">
+            <p className={`ft-text ${showDropdown ? 'ft-text-on' : ''}`}>
+              상세조건을 선택하세요
+            </p>
+            <button
+              className={`ft-btn ${showDropdown ? 'ft-btn-on' : ''}`}
+              onClick={() => {
+                setShowDropdown((prev) => !prev);
+              }}
+            ></button>
+          </div>
 
-      {/* 교육 목록 */}
-      <div>
-        {filteredTrainings.map((training) => (
-          <div key={training.id} className="list-card">
-            <div>
-              <div className="card-text-t">
-                <div className="card-title-box">
-                  <p className="card-title-t">{training.title}</p>
-                  {training.cost === '무료' && (
-                    <p className="cost-type">{training.cost}</p>
-                  )}
-                </div>
-
-                <div className="condition-box-t">
-                  <div className="condition-line-t">
-                    <img
-                      className="condition-icon-t"
-                      src="src/components/screens/icon/training-icon.svg"
-                    />
-                    <p className="condition-text-t">{training.company}</p>
-                  </div>
-                  <div className="condition-line-t">
-                    <img
-                      className="condition-icon-t"
-                      src="src/components/screens/icon/calendar-icon.svg"
-                    />
-                    <p className="condition-text-t">{training.period}</p>
-                  </div>
-
-                  <div className="condition-line-t">
-                    <img
-                      className="condition-icon-t"
-                      src="src/components/screens/icon/time-icon.svg"
-                    />
-                    <p className="condition-text-t">{training.hours}</p>
-                  </div>
-
-                  <div className="condition-line-t">
-                    <img
-                      className="condition-icon-t"
-                      src="src/components/screens/icon/location-icon.svg"
-                    />
-                    <p className="condition-text-t">{training.location}</p>
-                  </div>
-                  <div className="condition-line-t">
-                    <img
-                      className="condition-icon-t"
-                      src="src/components/screens/icon/user-icon.svg"
-                    />
-                    <p className="condition-text-t">{training.target}</p>
-                  </div>
-                </div>
-
-                <p className="num">담당자: 02-1111-2222</p>
+          {showDropdown && (
+            <div className="ft-dropdown-box">
+              <div
+                className="ft-dropdown"
+                onClick={() => handleFilterSelect('지역')}
+              >
+                지역
+              </div>
+              <div
+                className="ft-dropdown"
+                onClick={() => handleFilterSelect('훈련')}
+              >
+                훈련
               </div>
             </div>
+          )}
 
-            <div className="btn-box">
-              <button className="btn-one" onClick={() => handleSave(training)}>
-                저장하기
-              </button>
-              <button
-                className="btn-two"
-                onClick={() =>
-                  onNavigate && onNavigate(SCREENS.TRAINING_DETAIL, training)
-                }
-              >
-                상세보기
-              </button>
+          {/* 선택된 조건 표시 */}
+          {appliedFilter && appliedFilter.length > 0 && (
+            <div className="applied-filter-box space-y-3">
+              <p className="applied-filter-text">선택한 조건</p>
+              {appliedFilter.map((item) => (
+                <div key={item} className="applied-filter">
+                  {item}
+                  <button
+                    className="close-btn"
+                    onClick={() => handleRemoveAppliedFilter(item)}
+                  ></button>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
 
-      <button className="more-btn">더 많은 교육 프로그램 보기</button>
+      <div className="len-latest-box">
+        <p className="ft-len-text">전체 {filteredTrainings.length}개</p>
+      </div>
+
+      <div>
+        {filteredTrainings.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="sm-title">선택한 조건에 맞는</p>
+            <p className="sm-title">교육 프로그램이 없습니다.</p>
+          </div>
+        ) : (
+          filteredTrainings.map((training) => (
+            <div key={training.id} className="list-card">
+              <div>
+                <div className="card-text-t">
+                  <p className="card-title-t">{training.title}</p>
+
+                  <div className="condition-box-t">
+                    <div className="condition-line-t">
+                      <img
+                        className="condition-icon-t"
+                        src="src/components/screens/icon/calendar-icon.svg"
+                      />
+                      <p className="condition-text-t">
+                        시작일: {training.startDate}
+                      </p>
+                    </div>
+
+                    <div className="condition-line-t">
+                      <img
+                        className="condition-icon-t"
+                        src="src/components/screens/icon/calendar-icon.svg"
+                      />
+                      <p className="condition-text-t">
+                        종료일: {training.endDate}
+                      </p>
+                    </div>
+
+                    <div className="condition-line-t">
+                      <img
+                        className="condition-icon-t"
+                        src="src/components/screens/icon/location-icon.svg"
+                      />
+                      <p className="condition-text-t">{training.address}</p>
+                    </div>
+                    <div className="condition-line-t">
+                      <img
+                        className="condition-icon-t"
+                        src="src/components/screens/icon/user-icon.svg"
+                      />
+                      <p className="condition-text-t">{training.trainTarget}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="btn-box">
+                <button
+                  className="btn-one"
+                  onClick={() => handleSave(training)}
+                >
+                  저장하기
+                </button>
+                <button
+                  className="btn-two"
+                  onClick={() =>
+                    onNavigate &&
+                    onNavigate(SCREENS.TRAINING_DETAIL, training.id)
+                  }
+                >
+                  상세보기
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
       {showModal && (
         <Modal
+          onNavigate={onNavigate}
           onClose={handleCloseModal}
-          onNavigate={() => onNavigate(SCREENS.HOME)}
+          message={modalMessage}
         />
+      )}
+
+      {showFilterModal && (
+        <div className="ft-modal-backdrop">
+          <div className="ft-modal-box" onClick={(e) => e.stopPropagation()}>
+            <p className="ft-modal-text1">{selectedFilter}을 선택해주세요</p>
+            <div>
+              {filterOptions.map((option) => (
+                <p className="ft-modal-text2 mb-2" key={option}>
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={tempChecked.includes(option)}
+                      onChange={() => handleTempCheck(option)}
+                    />{' '}
+                    {option}
+                  </label>
+                </p>
+              ))}
+            </div>
+
+            <div className="modal-btn-box">
+              <button onClick={handleApplyFilter} className="ft-modal-btn1">
+                적용
+              </button>
+              <button
+                onClick={() => setShowFilterModal(false)}
+                className="ft-modal-btn2"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
