@@ -10,7 +10,7 @@ export default function Modal({ open, onClose, children }) {
   );
 }
 
-// 연보라 톤 배경 + 위쪽 여백 (스크린샷 느낌)
+
 const backdrop = {
   position: "fixed",
   inset: 0,
