@@ -8,6 +8,12 @@
   color:#5b4eb0;
 }
 
+.icon-btn{
+  font-size: 30px;  /* ← 아이콘만 크게 */
+  line-height: 1;
+  position:absolute; left:8px; top:1px;
+}
+
 /* 필드 */
 .sv-fields{ display:flex; flex-direction:column; gap: var(--gap-q-q); }
 .field .fl{

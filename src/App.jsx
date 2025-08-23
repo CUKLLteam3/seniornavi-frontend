@@ -31,7 +31,7 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  // 새로고침/재방문 시 자동 복원 (로그인 화면일 때만 시도)
+  /* 새로고침/재방문 시 자동 복원 (로그인 화면일 때만 시도)
   useEffect(() => {
     if (currentPage !== "login") return;
     const t = localStorage.getItem("token");
@@ -44,7 +44,7 @@ export default function App() {
         // 파싱 실패 시 무시
       }
     }
-  }, [currentPage]);
+  }, [currentPage]);*/
 
   // 화면 전환 핸들러
   const handleNavigate = (screen) => setCurrentPage(screen);
@@ -108,14 +108,14 @@ export default function App() {
         {/* ✅ 공통 상단 상태바: 모든 화면에서 표시 */}
         <StatusBar />
 
-        {/* 개발 편의: 로컬스토리지 초기화 */}
+        {/* 개발 편의: 로컬스토리지 초기화 
         <ResetLocalStorage
           onReset={() => {
             localStorage.clear();
             setCurrentUser(null);
             setCurrentPage("login");
           }}
-        />
+        /> */}
 
         {/* ===== 화면 렌더링 ===== */}
         {currentPage === "login" && (
@@ -191,7 +191,7 @@ export default function App() {
   );
 }
 
-/* 개발 편의용: 로컬스토리지 초기화 버튼 */
+/* 개발 편의용: 로컬스토리지 초기화 버튼
 function ResetLocalStorage({ onReset }) {
   return (
     <button
@@ -213,4 +213,4 @@ function ResetLocalStorage({ onReset }) {
       초기화
     </button>
   );
-}
+}*/

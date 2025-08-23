@@ -41,7 +41,7 @@
   display:flex;
   align-items:flex-start;
   gap:14px;
-  padding:25px 5px 1px;
+  padding:35px 5px 20px;
   background: transparent !important;
   border-bottom:0 !important;
 }
@@ -63,15 +63,13 @@
 }
 
 /* ===== 리스트 ===== */
-/* ⭕️ 패딩의 좌우를 0으로 → 중앙 정렬에 간섭 제거 */
-/* ⭕️ flex + center 로 리스트 블록 자체를 정확히 가운데 */
 .home-app.v3 .hf-list{
   padding:17px 0 calc(var(--tabbar-h) + 14px);
   display:flex;
   justify-content:center;
 }
 
-/* ⭕️ 리스트 내부 너비를 고정해서 항상 정확히 중앙 */
+
 .home-app.v3 .hf-list-inner{
   background:transparent !important;
   padding:0 !important;
@@ -93,7 +91,7 @@
   padding: 24px 10px 24px;
 }
 
-.home-app.v3 .hf-row + .hf-row{ margin-top: var(--row-gap); }
+.home-app.v3 .hf-row + .hf-row{ margin-top: 60px; }
 
 /* 아이콘 박스 */
 .home-app.v3 .hf-row__icon{
@@ -123,7 +121,7 @@
 }
 .home-app.v3 .hf-row__desc{
   font-size:15px;
-  line-height:1.6; /* ↑ */
+  line-height:1.6;
   color:#2a2a2a;
   font-weight:900;
   white-space:normal;
@@ -143,7 +141,4 @@
   stroke:#9AA1AC; stroke-width:2; fill:none;
 }
 
-/* 탭바 여백 */
-@media (max-width: 412px){
-  .home-app.v3 .hf-list{ padding-bottom: calc(var(--tabbar-h) + 14px); }
-}
+
