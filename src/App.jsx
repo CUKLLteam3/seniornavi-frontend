@@ -1,6 +1,7 @@
 // src/App.jsx
 import React, { useEffect, useState } from "react";
 
+// 화면 컴포넌트
 import LoginScreen from "./components/screens/LoginScreen.jsx";
 import SignupScreen from "./components/screens/SignupScreen.jsx";
 import HomeScreen from "./components/screens/HomeScreen.jsx";
@@ -8,22 +9,16 @@ import ResumeScreen from "./components/screens/Resume.jsx";
 import SurveyWizard from "./components/screens/SurveyWizard.jsx";
 import SurveyComplete from "./components/screens/SurveyComplete.jsx";
 import MyPage from "./components/screens/MyPage.jsx";
-
-import BottomTabBar from "./components/layout/BottomNavigation.jsx";
-import BottomNavigation from "./components/layout/BottomNavigation.jsx";
-import StatusBar from "./components/layout/StatusBar.jsx";
-
-// 컴포넌트
-import { HomeScreen } from './components/screens/HomeScreen';
-import { LoginScreen } from './components/screens/LoginScreen';
-import { JobListScreen } from './components/screens/JobListScreen';
-import { JobDetailScreen } from './components/screens/JobDetailScreen';
-import { TrainingListScreen } from './components/screens/TrainingListScreen';
-import { TrainingDetailScreen } from './components/screens/TrainingDetailScreen';
-import { BottomNavigation } from './components/layout/BottomNavigation';
-import { VoiceGuide } from './components/layout/VoiceGuide';
+import JobListScreen from "./components/screens/JobListScreen.jsx";
+import JobDetailScreen from "./components/screens/JobDetailScreen.jsx";
+import TrainingListScreen from "./components/screens/TrainingListScreen.jsx";
+import TrainingDetailScreen from "./components/screens/TrainingDetailScreen.jsx";
 import ResumeEditor from "./components/screens/ResumeEditor.jsx";
 
+// 레이아웃 컴포넌트
+import BottomNavigation from "./components/layout/BottomNavigation.jsx";
+import StatusBar from "./components/layout/StatusBar.jsx";
+import VoiceGuide from "./components/layout/VoiceGuide.jsx";
 
 // 전역 스타일
 import "./styles/globals.css";
