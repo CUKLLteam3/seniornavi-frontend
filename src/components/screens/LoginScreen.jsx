@@ -11,9 +11,6 @@ export default function LoginScreen({ onLogin, onSignup }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const SHOW_DEMO =
-    import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_LOGIN === "true";
-
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
   const canSubmit =
     tab === "password" && emailValid && password.length >= 6 && !loading;
@@ -172,16 +169,15 @@ export default function LoginScreen({ onLogin, onSignup }) {
             </button>
           </form>
 
-          {SHOW_DEMO && (
-            <button
-              onClick={handleDemoLogin}
-              className="rf-btn rf-btn-outline"
-              style={{ marginTop: 8, backgroundColor: "#e8ecff", color: "#333333" }}
-              type="button"
-            >
-              Test 계정으로 로그인 
-            </button>
-          )}
+          {/* 무조건 항상 버튼이 뜨도록 수정 */}
+          <button
+            onClick={handleDemoLogin}
+            className="rf-btn rf-btn-outline"
+            style={{ marginTop: 8, backgroundColor: "#e8ecff", color: "#333333" }}
+            type="button"
+          >
+            Test 계정으로 로그인
+          </button>
 
           <div className="rf-center-txt">아직 회원이 아니신가요?</div>
           <button onClick={onSignup} className="rf-btn rf-btn-primary">
