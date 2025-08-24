@@ -7,5 +7,15 @@ export default defineConfig({
     'process.env': {
       VITE_API_BASE_URL: JSON.stringify(process.env.VITE_API_BASE_URL),
     }
-  }
+  },
+  server: {
+    proxy: {
+      '/__api': {
+        target: 'https://api-bytecookie.click',
+        changeOrigin: true,
+        secure: false,
+        rewrite: p => p.replace(/^\/__api/, ''),
+      },
+    },
+  },
 })

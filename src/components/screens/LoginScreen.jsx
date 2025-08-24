@@ -1,96 +1,190 @@
-import React, { useState } from 'react';
-import { Button } from '../ui/Button';
+// src/components/screens/LoginScreen.jsx
+import { useState } from "react";
+import "./login.css";
+import { login } from "../../utils/auth"; // { token, user(id=1) } 저장
+import logoPenguin from "/src/assets/이력_등록하기.webp";
 
-export const LoginScreen = ({ onLogin, onSignup, onForgotPassword }) => {
-  const [phone, setPhone] = useState('');
-  const [loginMethod, setLoginMethod] = useState('phone');
+export default function LoginScreen({ onLogin, onSignup }) {
+  const [tab] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  const canSubmit =
+    tab === "password" && emailValid && password.length >= 6 && !loading;
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    
-    if (loginMethod === 'phone' && phone) {
-      onLogin({ method: 'phone', phone });
-    } else if (loginMethod === 'kakao') {
-      onLogin({ method: 'kakao' });
+    if (!canSubmit) return;
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await login({ email, password }); // 세션 저장 + user.id=1
+      onLogin?.(data);
+    } catch (err) {
+      setError(err?.message || "로그인에 실패했어요");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  async function handleDemoLogin() {
+    setEmail("test@refly.com");
+    setPassword("123456");
+    setTimeout(() => handleSubmit({ preventDefault: () => {} }), 0);
+  }
 
   return (
-    <div className="page">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-primary-600 mb-2">
-          🏠 SENiorNAVi
-        </h1>
-        <p className="text-gray-600">시니어를 위한 일자리 매칭 서비스</p>
-      </div>
-
-      <form onSubmit={handleLogin} className="space-y-4">
-        <div className="card">
-          <h2 className="font-semibold mb-4">로그인 방식 선택</h2>
-          
-          <div className="space-y-3">
-            <label className="flex items-center space-x-3">
-              <input
-                type="radio"
-                name="loginMethod"
-                value="phone"
-                checked={loginMethod === 'phone'}
-                onChange={(e) => setLoginMethod(e.target.value)}
-                className="text-primary-600"
-              />
-              <span>📱 휴대폰 번호로 로그인</span>
-            </label>
-            
-            <label className="flex items-center space-x-3">
-              <input
-                type="radio"
-                name="loginMethod"
-                value="kakao"
-                checked={loginMethod === 'kakao'}
-                onChange={(e) => setLoginMethod(e.target.value)}
-                className="text-primary-600"
-              />
-              <span>💬 카카오톡으로 로그인</span>
-            </label>
+    <div className="rf-page">
+      <div className="rf-wrap">
+        <div className="rf-logo-badge">
+          <div className="rf-logo-inner">
+            <img src={logoPenguin} alt="Re-fly 로고" />
           </div>
         </div>
 
-        {loginMethod === 'phone' && (
-          <div className="card">
-            <label className="block text-sm font-medium mb-2">
-              휴대폰 번호
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="010-1234-5678"
-              className="input-field"
-              required
-            />
+        <div className="rf-title">
+          <h1>Re-fly</h1>
+          <p className="rf-sub1">새로운 시작을 위한</p>
+          <p className="rf-sub2">시니어 취업 플랫폼</p>
+        </div>
+
+        <div className="rf-points">
+          <div className="rf-point">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="#10B981"
+              strokeWidth="2"
+              className="rf-icon"
+            >
+              <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            <span>안전한 로그인</span>
           </div>
-        )}
+          <div className="rf-point">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="#F43F5E"
+              className="rf-icon"
+            >
+              <path d="M12 21s-7-4.35-10-8.5C-0.5 8 3 3 7.5 5.5 9 6.3 10 7.7 12 9c2-1.3 3-2.7 4.5-3.5C21 3 24.5 8 22 12.5 19 16.65 12 21 12 21z" />
+            </svg>
+            <span>시니어 맞춤</span>
+          </div>
+          <div className="rf-point">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="#6366F1"
+              strokeWidth="2"
+              className="rf-icon"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 3" />
+            </svg>
+            <span>24시간 지원</span>
+          </div>
+        </div>
 
-        <Button type="submit" className="w-full">
-          {loginMethod === 'phone' ? '휴대폰으로 로그인' : '카카오톡으로 로그인'}
-        </Button>
-      </form>
+        <div className="rf-card">
+          <div className="rf-card-title">
+            <h2>로그인</h2>
+            <span className="rf-badge">
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+              >
+                <path
+                  d="M20 6L9 17l-5-5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </div>
+          <p className="rf-card-sub">안전하고 간편한 로그인</p>
 
-      <div className="mt-6 text-center space-y-2">
-        <button 
-          onClick={onSignup}
-          className="text-primary-600 hover:underline"
-        >
-          회원가입
-        </button>
-        <span className="text-gray-400 mx-2">|</span>
-        <button 
-          onClick={onForgotPassword}
-          className="text-gray-500 hover:underline"
-        >
-          비밀번호 찾기
-        </button>
+          <form onSubmit={handleSubmit} className="rf-form">
+            <div className="rf-field">
+              <label>이메일</label>
+              <input
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="example@email.com"
+                className={`rf-input ${email && !emailValid ? "rf-error" : ""}`}
+                autoComplete="email"
+                inputMode="email"
+              />
+              {email && !emailValid && (
+                <div className="rf-help-err">
+                  이메일 형식이 올바르지 않습니다.
+                </div>
+              )}
+            </div>
+
+            <div className="rf-field">
+              <label>비밀번호</label>
+              <input
+                type="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                autoComplete="current-password"
+                className="rf-input"
+              />
+            </div>
+
+            {error && (
+              <div className="rf-help-err" style={{ marginTop: 4 }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className={`rf-btn rf-btn-gray ${
+                !canSubmit ? "is-disabled" : ""
+              }`}
+            >
+              {loading ? "로그인 중..." : "로그인하기"}
+            </button>
+          </form>
+
+          {/* 무조건 항상 버튼이 뜨도록 수정 */}
+          <button
+            onClick={handleDemoLogin}
+            className="rf-btn rf-btn-outline"
+            style={{ marginTop: 8, backgroundColor: "#e8ecff", color: "#333333" }}
+            type="button"
+          >
+            Test 계정으로 로그인
+          </button>
+
+          <div className="rf-center-txt">아직 회원이 아니신가요?</div>
+          <button onClick={onSignup} className="rf-btn rf-btn-primary">
+            회원가입하기
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+}
