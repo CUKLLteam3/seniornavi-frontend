@@ -5,8 +5,8 @@ export default function BottomNavigation({ currentPage, onNavigate }) {
   const tabs = [
     { key: "home",   label: "홈",     Icon: HomeIcon,   onClick: () => onNavigate?.("home") },
     { key: "jobs",   label: "일자리", Icon: BagIcon,    onClick: () => alert("일자리: 준비 중입니다") },
-    { key: "edu",    label: "교육",   Icon: BookIcon,   onClick: () => alert("교육: 준비 중입니다") },
-    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => onNavigate?.("resumeEditor") },
+   // { key: "edu",    label: "교육",   Icon: BookIcon,   onClick: () => alert("교육: 준비 중입니다") },//
+    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => alert("AI: 준비 중입니다") },
     { key: "mypage", label: "내정보", Icon: UserIcon,   onClick: () => onNavigate?.("mypage") },
   ];
 

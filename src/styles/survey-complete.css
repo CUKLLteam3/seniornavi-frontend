@@ -1,6 +1,6 @@
 /* 완료 화면 전체 배경색 */
 .survey-app.done-mode {
-  background: #f4f6f9; 
+  background: #f6f8fb; 
 }
 
 /* 기존 .survey-app 의 흰색 배경을 덮어씀 */
@@ -45,5 +45,4 @@
 /* 버튼 묶음 */
 .done-actions.v2{
   margin-top:39px; display:flex; flex-direction:column; gap:8px; align-items: center;
-   
 }

@@ -21,7 +21,7 @@ export default function ResumeScreen({ onNavigate, onStart }) {
             height="22"
             fill="none"
             stroke="#111"
-            strokeWidth="2"
+            strokeWidth="2.5"
           >
             <path d="M15 18l-6-6 6-6" />
           </svg>
