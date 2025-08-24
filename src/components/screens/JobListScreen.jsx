@@ -146,7 +146,7 @@ export const JobListScreen = ({ onNavigate }) => {
                 try {
                   const res = await api.get('/recruit/list');
                   setJobs(res.data);
-                  console.log('✅ 전체 일자리 불러오기 성공')
+                  console.log('✅ 전체 일자리 불러오기 성공');
                 } catch (err) {
                   console.error('❌ 전체 일자리 불러오기 실패:', err);
                 } finally {
@@ -165,7 +165,9 @@ export const JobListScreen = ({ onNavigate }) => {
                   <div className="card-title-box">
                     <p className="card-title">{job.recrutPbancTtl}</p>
                     <p className="work-type">
-                      {job.hireTypeNmLst.split(',')[0]}
+                      {job.hireTypeNmLst.split(',')[0] === '무기계약직'
+                        ? '계약직'
+                        : job.hireTypeNmLst.split(',')[0]}
                     </p>
                   </div>
 
