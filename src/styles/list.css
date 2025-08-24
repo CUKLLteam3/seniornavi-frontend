@@ -104,14 +104,14 @@
 }
 
 .search-bar {
-  background: url(../components/screens/icon/search-icon2.svg);
+  background: url(/icon/search2-icon.svg);
   background-repeat: no-repeat;
   background-size: 24px;
   background-position: 5px center;
 
   flex: 1;
   min-width: 0;
-  
+
   height: 51px;
   border-radius: 0px;
   font-size: 16px;
@@ -205,12 +205,12 @@
   border-radius: 0 0 12px 12px;
 }
 
-.ft-dropdown:hover{
-  background-color: #DFE6FF;
+.ft-dropdown:hover {
+  background-color: #dfe6ff;
 }
 
 .ft-btn {
-  background: url(../components/screens/icon/arrowdown-icon.svg);
+  background: url(/icon/arrowdown-icon.svg);
   background-repeat: no-repeat;
   width: 24px;
   height: 24px;
@@ -231,11 +231,11 @@
 }
 
 .ft-text-on {
-  color: #6979F8
+  color: #6979f8;
 }
 
 .ft-btn-on {
-  background: url(../components/screens/icon/arrowup-icon.svg);
+  background: url(/icon/arrowup-icon.svg);
 }
 
 .ft-len-text {
@@ -604,13 +604,13 @@ input[type='checkbox']:checked {
   align-items: center;
   position: relative;
   flex: 0 0 auto;
-  
+
   height: 45px;
   padding-left: 13px;
   padding-right: 13px;
   border-radius: 10px;
-  border: 1px solid #D9D9D7;
-  background: #FEFEFE;
+  border: 1px solid #d9d9d7;
+  background: #fefefe;
 }
 
 .applied-filter-box {
@@ -621,7 +621,7 @@ input[type='checkbox']:checked {
 }
 
 .close-btn {
-  background: url(../components/screens/icon/close-icon.svg);
+  background: url(/icon/close-icon.svg);
   background-repeat: no-repeat;
   border: none;
   padding: 4.5px;

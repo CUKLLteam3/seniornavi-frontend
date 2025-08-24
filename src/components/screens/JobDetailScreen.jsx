@@ -75,7 +75,7 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
       <div className="j-card-1">
         <div className="job-com-box">
           <img
-            src="src/components/screens/icon/company2-icon.svg"
+            src="/icon/company2-icon.svg"
             width={'47px'}
             height={'47px'}
           />
@@ -90,12 +90,12 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
         <p className="sub-title">근무조건</p>
 
         <div className="condition-line-d">
-          <img src="src/components/screens/icon/location-icon.svg" />
+          <img src="/icon/location-icon.svg" />
           <p className="sm-title">근무지역</p>
         </div>
         <p className="sm-detail-rg">{job.workRgnNmLst}</p>
         <div className="condition-line-d">
-          <img src="src/components/screens/icon/user-icon.svg" />
+          <img src="/icon/user-icon.svg" />
           <p className="sm-title">고용형태</p>
         </div>
         <p className="sm-detail-rg">{job.hireTypeNmLst}</p>
@@ -153,7 +153,7 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
               <div className="icon-text">
                 <img
                   className="user-icon"
-                  src="src/components/screens/icon/internet-icon.svg"
+                  src="/icon/internet-icon.svg"
                 />
                 <p className="sm-detail">홈페이지</p>
               </div>

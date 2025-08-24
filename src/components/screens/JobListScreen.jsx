@@ -137,7 +137,7 @@ export const JobListScreen = ({ onNavigate }) => {
       <div>
         {filteredJobs.length === 0 ? (
           <div className="text-center py-8">
-            <p className="sm-title">등록한 이력이나 선택한 조건에 맞는</p>
+            <p className="sm-title">등록한 이력이나 검색어에 맞는</p>
             <p className="sm-title">일자리가 없습니다.</p>
             <button
               className="btn-list"
@@ -175,7 +175,7 @@ export const JobListScreen = ({ onNavigate }) => {
                     <div className="company-box-in">
                       <img
                         className="company-icon"
-                        src="src/components/screens/icon/company-icon.svg"
+                        src="/icon/company-icon.svg"
                       />
                       <p className="card-company">{job.instNm}</p>
                     </div>
@@ -185,7 +185,7 @@ export const JobListScreen = ({ onNavigate }) => {
                     <div className="condition-line">
                       <img
                         className="condition-icon"
-                        src="src/components/screens/icon/location-icon.svg"
+                        src="/icon/location-icon.svg"
                       />
                       <p className="condition-text">{job.workRgnNmLst}</p>
                     </div>

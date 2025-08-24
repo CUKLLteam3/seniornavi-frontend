@@ -257,7 +257,7 @@ export const TrainingListScreen = ({ onNavigate }) => {
       <div>
         {filteredTrainings.length === 0 ? (
           <div className="text-center py-8">
-            <p className="sm-title">선택한 조건에 맞는</p>
+            <p className="sm-title">선택한 조건이나 검색어에 맞는</p>
             <p className="sm-title">교육 프로그램이 없습니다.</p>
           </div>
         ) : (
@@ -271,7 +271,7 @@ export const TrainingListScreen = ({ onNavigate }) => {
                     <div className="condition-line-t">
                       <img
                         className="condition-icon-t"
-                        src="src/components/screens/icon/calendar-icon.svg"
+                        src="/icon/calendar-icon.svg"
                       />
                       <p className="condition-text-t">
                         시작일: {training.startDate}
@@ -281,7 +281,7 @@ export const TrainingListScreen = ({ onNavigate }) => {
                     <div className="condition-line-t">
                       <img
                         className="condition-icon-t"
-                        src="src/components/screens/icon/calendar-icon.svg"
+                        src="/icon/calendar-icon.svg"
                       />
                       <p className="condition-text-t">
                         종료일: {training.endDate}
@@ -291,14 +291,14 @@ export const TrainingListScreen = ({ onNavigate }) => {
                     <div className="condition-line-t">
                       <img
                         className="condition-icon-t"
-                        src="src/components/screens/icon/location-icon.svg"
+                        src="/icon/location-icon.svg"
                       />
                       <p className="condition-text-t">{training.address}</p>
                     </div>
                     <div className="condition-line-t">
                       <img
                         className="condition-icon-t"
-                        src="src/components/screens/icon/user-icon.svg"
+                        src="/icon/user-icon.svg"
                       />
                       <p className="condition-text-t">{training.trainTarget}</p>
                     </div>

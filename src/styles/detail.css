@@ -17,18 +17,6 @@
   line-height: normal;
 }
 
-.back-btn {
-  width: 30px;
-  height: 30px;
-
-  background: url(../components/screens/icon/back-icon.svg);
-  background-repeat: no-repeat;
-  background-size: 30px;
-
-  padding: 0px;
-  margin-top: 22px;
-}
-
 .j-card-1 {
   width: 374px;
   padding: 33px 31px;

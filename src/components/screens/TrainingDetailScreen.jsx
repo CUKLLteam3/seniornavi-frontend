@@ -78,7 +78,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
       <div className="j-card-1">
         <div className="job-com-box">
           <img
-            src="src/components/screens/icon/company2-icon.svg"
+            src="/icon/company2-icon.svg"
             width={'47px'}
             height={'47px'}
           />
@@ -112,7 +112,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
             <img
               style={{ padding: '2px' }}
               className="sche-icon"
-              src="src/components/screens/icon/calendar-icon.svg"
+              src="/icon/calendar-icon.svg"
             />
             <div>
               <p className="sm-detail mb-1">교육기간</p>
@@ -125,7 +125,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
           <div className="sche-line">
             <img
               className="sche-icon"
-              src="src/components/screens/icon/location-icon.svg"
+              src="/icon/location-icon.svg"
             />
             <div>
               <p className="sm-detail mb-1">교육장소</p>
@@ -143,7 +143,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
             <div className="condition-line">
               <img
                 className=""
-                src="src/components/screens/icon/user-icon.svg"
+                src="/icon/user-icon.svg"
                 width={'25px'}
                 height={'28px'}
               />
@@ -155,7 +155,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
           <div className="flex gap-3">
             <div className="condition-line">
               <img
-                src="src/components/screens/icon/user2-icon.svg"
+                src="/icon/user2-icon.svg"
                 width={'21px'}
                 height={'26px'}
                 style={{ marginLeft: '2px' }}
@@ -180,7 +180,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
 
         <div>
           <div className="flex mb-2">
-            <img src="src/components/screens/icon/company-icon.svg" />
+            <img src="/icon/company-icon.svg" />
             <p className="sm-detail-nm">기관명</p>
           </div>
           <p className="xs-detail mb-6">{training.providerName}</p>
@@ -190,7 +190,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
               <div className="icon-text">
                 <img
                   className="user-icon"
-                  src="src/components/screens/icon/call-icon.svg"
+                  src="/icon/call-icon.svg"
                 />
                 <p className="sm-detail">연락처</p>
               </div>
@@ -201,7 +201,7 @@ export const TrainingDetailScreen = ({ trainingId, onNavigate }) => {
               <div className="icon-text">
                 <img
                   className="user-icon"
-                  src="src/components/screens/icon/internet-icon.svg"
+                  src="/icon/internet-icon.svg"
                 />
                 <p className="sm-detail">홈페이지</p>
               </div>
