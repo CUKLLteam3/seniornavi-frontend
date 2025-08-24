@@ -6,31 +6,35 @@ export default function BottomNavigation({ currentPage, onNavigate }) {
     { key: "home",   label: "홈",     Icon: HomeIcon,   onClick: () => onNavigate?.("home") },
     { key: "jobs",   label: "일자리", Icon: BagIcon,    onClick: () => alert("일자리: 준비 중입니다") },
     { key: "edu",    label: "교육",   Icon: BookIcon,   onClick: () => alert("교육: 준비 중입니다") },
-    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => alert("AI: 준비 중입니다") },
+    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => onNavigate?.("resumeEditor") },
     { key: "mypage", label: "내정보", Icon: UserIcon,   onClick: () => onNavigate?.("mypage") },
   ];
 
   return (
     <nav className="bnv" role="navigation" aria-label="하단 탭바">
       <div className="bnv__inner">
-        {tabs.map(({ key, label, Icon, onClick }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={onClick}
-            className={`bnv__tab ${currentPage === key ? "is-active" : ""}`}
-            aria-current={currentPage === key ? "page" : undefined}
-          >
-            <span className="bnv__icon"><Icon /></span>
-            <span className="bnv__label">{label}</span>
-          </button>
-        ))}
+        {tabs.map(({ key, label, Icon, onClick }) => {
+          // resumeEditor 페이지일 때 AI 탭을 활성화
+          const isActive = currentPage === key || (currentPage === "resumeEditor" && key === "ai");
+          
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={onClick}
+              className={`bnv__tab ${isActive ? "is-active" : ""}`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <span className="bnv__icon"><Icon /></span>
+              <span className="bnv__label">{label}</span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );
 }
 
-/* ====== 아이콘 (SVG) ====== */
 function HomeIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">

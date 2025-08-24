@@ -10,7 +10,10 @@ import SurveyComplete from "./components/screens/SurveyComplete.jsx";
 import MyPage from "./components/screens/MyPage.jsx";
 
 import BottomTabBar from "./components/layout/BottomNavigation.jsx";
+import BottomNavigation from "./components/layout/BottomNavigation.jsx";
 import StatusBar from "./components/layout/StatusBar.jsx";
+
+import ResumeEditor from "./components/screens/ResumeEditor.jsx";
 
 // 전역 스타일
 import "./styles/globals.css";
@@ -100,7 +103,7 @@ export default function App() {
   }, [currentPage, currentUser]);
 
   // 탭바 노출 페이지
-  const tabPages = new Set(["home", "mypage", "resume", "survey", "surveyDone"]);
+  const tabPages = new Set(["home", "mypage", "resume", "survey", "surveyDone", "resumeEditor"]);
 
   return (
     <div className="app-shell">
@@ -161,6 +164,11 @@ export default function App() {
             onGoHome={() => setCurrentPage("home")}
             onGoCoach={() => alert("AI 코치 상담은 준비중입니다")}
           />
+
+        )}
+                {/* ResumeEditor */}
+        {currentPage === "resumeEditor" && (
+          <ResumeEditor onNavigate={handleNavigate} />
         )}
 
         {/* ===== 공용 하단 탭바 (로그인/회원가입 제외) ===== */}

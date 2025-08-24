@@ -1,0 +1,311 @@
+.resume-editor-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-editor-header {
+  background: white;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
+  padding: 8px 0 16px;
+  background: white;
+}
+
+.hdr-right {
+  width: 38px;
+}
+
+.resume-editor-body {
+  flex: 1;
+  padding: 20px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Input Component Styles */
+.resume-input-container {
+  width: 100%;
+}
+
+.input-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.resume-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: inherit;
+}
+
+.resume-textarea:focus {
+  outline: none;
+  border-color: #5b47e0;
+  box-shadow: 0 0 0 3px rgba(91, 71, 224, 0.1);
+}
+
+.resume-textarea:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+}
+
+/* Result Component Styles */
+.resume-result-container {
+  width: 100%;
+}
+
+.result-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.mascot-image {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 16px;
+  object-fit: contain;
+}
+
+.saved-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.small-mascot {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.check-icon {
+  color: #10b981;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.result-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.result-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.resume-content-section {
+  margin-bottom: 20px;
+}
+
+.content-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.doc-icon {
+  font-size: 18px;
+}
+
+.resume-content-box {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.resume-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-wrap;
+}
+
+/* Common Styles */
+.info-box {
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.info-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.star-icon {
+  color: #f59e0b;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.8;
+}
+
+.sample-text {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  margin: 16px 0;
+  line-height: 1.5;
+}
+
+/* Buttons */
+.submit-button,
+.primary-button {
+  width: 100%;
+  padding: 16px;
+  background: #5b47e0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover,
+.primary-button:hover {
+  background: #4c3bc9;
+}
+
+.submit-button:disabled,
+.primary-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  width: 100%;
+  padding: 16px;
+  background: white;
+  color: #5b47e0;
+  border: 1px solid #5b47e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.secondary-button:hover {
+  background: #f3f4f6;
+}
+
+.secondary-button.full-width {
+  margin-top: 12px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .resume-editor-body {
+    padding: 16px 12px;
+  }
+
+  .input-card,
+  .result-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 375px) {
+  .resume-textarea {
+    min-height: 150px;
+    font-size: 13px;
+  }
+
+  .info-list {
+    font-size: 12px;
+  }
+
+  .submit-button,
+  .primary-button,
+  .secondary-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
