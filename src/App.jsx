@@ -105,21 +105,9 @@ export default function App() {
   // 탭바 노출 페이지
   const tabPages = new Set(["home", "mypage", "resume", "survey", "surveyDone", "resumeEditor"]);
 
-  return (
+ return (
     <div className="app-shell">
       <main className="frame">
-        {/* ✅ 공통 상단 상태바: 모든 화면에서 표시 */}
-        <StatusBar />
-
-        {/* 개발 편의: 로컬스토리지 초기화 
-        <ResetLocalStorage
-          onReset={() => {
-            localStorage.clear();
-            setCurrentUser(null);
-            setCurrentPage("login");
-          }}
-        /> */}
-
         {/* ===== 화면 렌더링 ===== */}
         {currentPage === "login" && (
           <LoginScreen
