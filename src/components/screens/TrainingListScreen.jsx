@@ -25,7 +25,6 @@ export const TrainingListScreen = ({ onNavigate }) => {
     setLoading(true);
     try {
       const query = new URLSearchParams();
-      query.append('program', 'both');
 
       if (appliedFilter.length > 0) {
         const { area1, gbn } = getQueryParams(appliedFilter);
@@ -35,9 +34,9 @@ export const TrainingListScreen = ({ onNavigate }) => {
 
       if (searchTerm) query.append('keyword', searchTerm);
 
-      const url = query.toString()
-        ? `/api/educations?${query.toString()}`
-        : '/api/educations';
+      const url = `/api/educations?program=both${
+        query.toString() ? `&${query.toString()}` : ''
+      }`;
       console.log('✅ 호출한 url:', url);
       const res = await api.get(url);
       setTrainings(res.data);
@@ -107,18 +106,15 @@ export const TrainingListScreen = ({ onNavigate }) => {
 
   // 상세조건 쿼리파라미터 배열 생성
   const getQueryParams = (appliedFilter) => {
-    let program = 'both';
     let area1 = [];
     let gbn = [];
 
     appliedFilter.forEach((filter) => {
-      if (programMap[filter]) program = programMap[filter];
       if (areaMap[filter]) area1.push(areaMap[filter]);
       if (gbnMap[filter]) gbn.push(gbnMap[filter]);
     });
 
     return {
-      program: program,
       area1: area1.join(',') || null,
       gbn: gbn.join(',') || null,
     };
@@ -259,6 +255,18 @@ export const TrainingListScreen = ({ onNavigate }) => {
           <div className="text-center py-8">
             <p className="sm-title">선택한 조건이나 검색어에 맞는</p>
             <p className="sm-title">교육 프로그램이 없습니다.</p>
+            <button
+              className="btn-list"
+              onClick={() => {
+                setAppliedFilter([]);
+                setSearchTerm('');
+                setSearchInput('');
+                setTempChecked([]);
+                setShowDropdown(false);
+              }}
+            >
+              전체 교육 목록 보기
+            </button>
           </div>
         ) : (
           filteredTrainings.map((training) => (

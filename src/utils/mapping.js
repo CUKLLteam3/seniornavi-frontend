@@ -91,7 +91,6 @@ export function makeWantListPayload(surveyData) {
 
 // 교육 상세필터를 위한 매핑
 export const programMap = {
-  '전체': 'both',
   '국민내일배움카드': 'card',
   '일학습병행 훈련과정': 'apprentice',
 };
