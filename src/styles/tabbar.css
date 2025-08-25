@@ -1,40 +1,48 @@
-:root{
-  --bnv-width: 412px;   /* 프레임 폭 */
-  --bnv-height: 84px;
-
-  --bnv-bg: #ffffff;
-  --bnv-border: #EFEFF4;
-  --bnv-text: #C0C3CA;
-  --bnv-active: #6F56F7;
+html,
+body {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
 }
 
-/* ▶︎ 왼쪽 하단에 고정 (중앙 정렬 제거) */
-.bnv{
+:root {
+  --bnv-height: 84px;
+  --bnv-bg: #ffffff;
+  --bnv-border: #efeff4;
+  --bnv-text: #c0c3ca;
+  --bnv-active: #6f56f7;
+}
+
+.bnv {
   position: fixed;
-  left: 0;               /* ← 여기! */
+  left: 0; /* 왼쪽 정렬 */
   bottom: 0;
-  /* 중앙정렬용 transform 제거 */
-  /* transform: translateX(-50%);  삭제 */
-  width: var(--bnv-width);
+  width: 401px; /* 고정 */
+  max-width: 401px;
   height: var(--bnv-height);
   background: var(--bnv-bg);
   border-top: 1px solid var(--bnv-border);
-  z-index: 50;
+  box-sizing: border-box;
+  z-index: 1000;
+  margin-left: 0; /* 가운데 정렬 제거 */
 }
 
-.bnv__inner{
+.bnv__inner {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.bnv__tab{
+.bnv__tab {
   appearance: none;
   border: 0;
   background: transparent;
-  width: 20%;
+  flex: 1; /* width: 20% 대신 flex 사용 */
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -44,18 +52,30 @@
   color: var(--bnv-text);
   cursor: pointer;
   user-select: none;
+  margin: 0;
+  padding: 0;
 }
 
-.bnv__tab.is-active{
+.bnv__tab.is-active {
   color: var(--bnv-active);
   font-weight: 700;
 }
 
-.bnv__icon svg{ width: 28px; height: 28px; display: block; }
-.bnv__label{ font-size: 12px; line-height: 1; }
+.bnv__icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+.bnv__label {
+  font-size: 12px;
+  line-height: 1;
+}
 
-.bnv__tab:active{ background: rgba(0,0,0,0.025); }
+.bnv__tab:active {
+  background: rgba(0, 0, 0, 0.025);
+}
 
-/* 중앙정렬 대응 미디어쿼리도 더 이상 필요 없음
-@media (max-width: 412px){ .bnv{ width: 100vw; } }
-*/
+/* 전체 페이지에서 네비게이션 공간 확보 */
+body {
+  padding-bottom: var(--bnv-height);
+}

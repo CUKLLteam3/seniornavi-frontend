@@ -1,5 +1,5 @@
 import React from "react";
-import "./resume.css";
+import "../screens/resume.css";
 import penguin from "../../assets/이력_등록하기.webp"; 
 
 export default function ResumeScreen({ onNavigate, onStart }) {

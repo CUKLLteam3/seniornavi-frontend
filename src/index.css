@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #ffffff; /* 서비스 배경색 고정 */
 }
 
 h1 {
@@ -65,4 +66,22 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.bottom-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 390px; /* 서비스 고정 너비 */
+  max-width: 390px;
+  margin: 0;
+  padding: 0;
+  z-index: 999;
+}
+
+.app {
+  width: 390px; /* 서비스 고정 너비 */
+  min-height: 100vh; /* 최소 높이 고정 */
+  background-color: #ffffff; /* 앱 배경색 고정 */
+  margin: 0 auto; /* 화면 가운데 정렬 */
 }

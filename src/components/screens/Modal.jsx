@@ -1,6 +1,10 @@
-// src/components/screens/Modal.jsx
-import { SCREENS } from '../../constants/screens';
+// import { SCREENS } from '../../constants/screens';
 import '../../styles/modal.css';
+
+// 임시 SCREENS 상수 (constants/screens.js 파일이 없을 경우)
+const SCREENS = {
+  HOME: 'home'
+};
 
 // HEAD 버전을 기본 export로 유지 (기존 import 호환성)
 const Modal = ({ onNavigate, onClose, message }) => {
@@ -10,7 +14,7 @@ const Modal = ({ onNavigate, onClose, message }) => {
         <img src="/icon/modal-logo.png" width={"142px"}/>
         <p className="modal-text">{message}</p>
 
-        <button className="modal-btn1" onClick={() => onNavigate(SCREENS.HOME)}>
+        <button className="modal-btn1" onClick={() => onNavigate && onNavigate(SCREENS.HOME)}>
           홈으로 가기
         </button>
         <button className="modal-btn2" onClick={onClose}>계속 둘러보기</button>

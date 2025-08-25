@@ -175,6 +175,27 @@ export const TrainingListScreen = ({ onNavigate }) => {
   return (
     <div className="pg">
       <div className="title-box">
+        <header className="title-header">
+          <button
+            className="back-btn"
+            aria-label="뒤로"
+            onClick={() => onNavigate?.("home")}
+            type="button"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="#111"
+              strokeWidth="2.5"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <div className="hdr-right" />
+        </header>
+
         <p className="title-text">교육 프로그램</p>
         <div className="search-items">
           <input

@@ -95,6 +95,27 @@ export const JobListScreen = ({ onNavigate }) => {
   return (
     <div className="pg">
       <div className="title-box">
+        <header className="resume-header">
+        <button
+          className="back-btn"
+          aria-label="뒤로"
+          onClick={() => onNavigate?.("home")}
+          type="button"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="#111"
+            strokeWidth="2.5"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <div className="hdr-right" />
+      </header>
+      
         <div>
           <p className="title-text">일자리 찾기</p>
           <p className="title-text-sv">

@@ -1,5 +1,5 @@
 import React from "react";
-import "./home.css";
+import "../screens/home.css";
 import penguin from "../../assets/메인_페이지.webp";
 
 export default function HomeScreen({ onNavigate }) {
@@ -35,14 +35,14 @@ export default function HomeScreen({ onNavigate }) {
             desc="일자리를 추천 받아보세요"
             onClick={() => onNavigate?.("jobs")}
           />
-          {/*
+          {
           <NavRow
             icon={<IconProfile />}
             title="이력 등록하기"
             desc="이력을 등록해서 맞춤 일자리를 추천 받아보세요"
             onClick={() => onNavigate?.("resume")}
           />
-          */}
+          }
         </div>
       </main>
     </div>

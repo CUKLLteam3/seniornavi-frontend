@@ -1,6 +1,6 @@
 // src/components/screens/LoginScreen.jsx
 import { useState } from "react";
-import "./login.css";
+import "../screens/login.css";
 import { login } from "../../utils/auth"; // { token, user(id=1) } 저장
 import logoPenguin from "/src/assets/이력_등록하기.webp";
 
