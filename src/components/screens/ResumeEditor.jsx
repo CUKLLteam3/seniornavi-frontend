@@ -4,6 +4,8 @@ import axios from 'axios';
 import penguin from '../../assets/이력_등록하기.webp';
 import './resumeEditor.css';
 
+import api from '../../utils/api';
+
 // ResumeInput 컴포넌트
 const ResumeInput = ({ 
   resumeData, 
@@ -24,7 +26,7 @@ const ResumeInput = ({
     setError('');
 
     try {
-      const response = await axios.post(`/__api/openai/resume`, {
+      const response = await api.post('/openai/resume', {
         message: resumeData
       });
       setRecommendation(response.data.reply);
@@ -111,12 +113,9 @@ const handleSave = async () => {
   try {
     const userId = 1; // 임시 고정
     
-    const response = await axios.post(
-      `/__api/resume/${userId}/save`, 
-      {
-        res: recommendation
-      }
-    );
+    const response = await api.post(`/resume/${userId}/save`, {
+      res: recommendation
+    });
     
     setIsSaved(true);
     
