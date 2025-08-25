@@ -1,6 +1,6 @@
 // src/components/screens/SignupScreen.jsx
 import { useMemo, useState } from "react";
-import "./signup.css";
+import "../screens/signup.css";
 import { signup } from "../../utils/auth"; // ✅ mock 회원가입 API
 
 export default function SignupScreen({ onBack, onSignup }) {

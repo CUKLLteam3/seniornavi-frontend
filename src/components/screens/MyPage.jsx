@@ -10,7 +10,7 @@ import {
   // deleteSavedRecruit,
 } from "../../utils/mypage";
 
-import Modal from "./Modal.jsx";
+import { BaseModal as Modal } from "./Modal.jsx";
 
 const DEBUG = true;
 
@@ -48,35 +48,6 @@ export default function MyPage({ onLogout, onNavigate }) {
       return String(resume);
     }
   }, [resume]);
-
-  // 모달 위치 고정(왼쪽 컬럼 기준)
-  const [resumePos, setResumePos] = useState({ left: 24, top: 100, width: 380 });
-  useEffect(() => {
-    document.body.style.overflow = openResume ? "hidden" : "";
-  }, [openResume]);
-  useLayoutEffect(() => {
-    if (!openResume) return;
-    const update = () => {
-      const col = document.getElementById("mypage-left");
-      if (col) {
-        const r = col.getBoundingClientRect();
-        setResumePos({
-          left: Math.round(r.left + window.scrollX + 12),
-          top: Math.round(r.top + window.scrollY + 12),
-          width: Math.min(Math.round(r.width - 24), 420),
-        });
-      } else {
-        setResumePos((p) => ({ ...p, left: 20, top: 80 }));
-      }
-    };
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update, true);
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update, true);
-    };
-  }, [openResume]);
 
   // 공용 유틸
   const extractArray = (v) => {
@@ -230,7 +201,17 @@ export default function MyPage({ onLogout, onNavigate }) {
 
       <main id="mypage-left" className="mypg__content">
         {/* 자소서 보기 */}
-        <section className="card-box">
+        <section 
+          className="card-box" 
+          style={{ 
+            marginBottom: '16px', 
+            padding: '10px',                    // ✅ 패딩 줄임
+            height: 'auto',
+            minHeight: '120px',
+            overflow: 'visible',                // ✅ 넘침 허용
+            position: 'relative'                // ✅ 포지션 설정
+          }}
+        >
           <button
             className="row link"
             onClick={() => {
@@ -238,23 +219,53 @@ export default function MyPage({ onLogout, onNavigate }) {
               setOpenResume(true);
             }}
             style={{
-              width: "100%",
+              width: "calc(100% + 40px)",        // ✅ 확실한 너비 확장
               textAlign: "left",
               background: "none",
               border: "none",
-              padding: 0,
+              padding: "24px 30px",              // ✅ 좌우 패딩 증가
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+              minHeight: "80px",
+              marginLeft: "-20px",               // ✅ 좌측으로 확장
+              marginRight: "-20px",              // ✅ 우측으로 확장
+              position: "relative",              // ✅ 포지션 설정
+              maxWidth: "none",                  // ✅ 최대 너비 제한 해제
+              boxSizing: "border-box"            // ✅ 박스 사이징
             }}
           >
-            <span className="row__ic">
-              <FileText size={24} />
+            <span className="row__ic" style={{ flexShrink: 0 }}>
+              <FileText size={32} />
             </span>
-            <div className="row__txt">
-              <div className="row__title">완성된 자소서</div>
-              <div className="row__sub">
+            <div className="row__txt" style={{ 
+              flex: 1,                           // ✅ flex 값 조정
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              paddingRight: '12px',              // ✅ 화살표와의 간격
+              minWidth: 0                        // ✅ 최소 너비 설정
+            }}>
+              <div className="row__title" style={{ 
+                marginBottom: '6px',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                lineHeight: '1.2'
+              }}>
+                완성된 자소서
+              </div>
+              <div className="row__sub" style={{ 
+                fontSize: '15px', 
+                color: '#666', 
+                lineHeight: '1.4',
+                wordWrap: 'break-word'          // ✅ 단어 줄바꿈
+              }}>
                 클릭하시면 작성된 전체 자소서를 볼 수 있습니다.
               </div>
             </div>
-            <ChevronRight className="chev" size={18} />
+            <ChevronRight className="chev" size={24} style={{ 
+              flexShrink: 0
+            }} />
           </button>
         </section>
 
@@ -290,14 +301,19 @@ export default function MyPage({ onLogout, onNavigate }) {
           <div
             style={{
               position: "fixed",
-              left: resumePos.left,
-              top: resumePos.top,
-              width: resumePos.width,
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "min(90vw, 420px)",
+              maxHeight: "85vh",
               background: "#fff",
               borderRadius: 14,
-              padding: 30,
+              padding: 20,
               boxShadow: "0 20px 40px rgba(0,0,0,.12)",
-              margin: 0,
+              overflow: "hidden",
+              zIndex: 10001,
+              display: "flex",
+              flexDirection: "column",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -306,7 +322,7 @@ export default function MyPage({ onLogout, onNavigate }) {
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                marginBottom: 28,
+                marginBottom: 20,
               }}
             >
               <span className="row__ic">
@@ -322,8 +338,9 @@ export default function MyPage({ onLogout, onNavigate }) {
               value={resumeText || "작성된 자소서가 없습니다."}
               style={{
                 width: "100%",
-                minHeight: 240,
-                resize: "vertical",
+                minHeight: 200,
+                maxHeight: 250,
+                resize: "none",
                 background: "#FFFFFF",
                 border: "1px solid #E5E7EB",
                 borderRadius: 8,
@@ -331,10 +348,12 @@ export default function MyPage({ onLogout, onNavigate }) {
                 lineHeight: 1.6,
                 fontSize: 15,
                 color: "#111827",
+                boxSizing: "border-box",
+                overflow: "auto",
               }}
             />
 
-            <div style={{ display: "grid", gap: 12, marginTop: 50 }}>
+            <div style={{ display: "grid", gap: 12, marginTop: 20 }}>
               <button
                 onClick={() => {
                   if (typeof onNavigate === "function") onNavigate("home");

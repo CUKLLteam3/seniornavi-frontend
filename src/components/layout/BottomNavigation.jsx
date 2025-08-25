@@ -4,9 +4,9 @@ import "../../styles/tabbar.css";
 export default function BottomNavigation({ currentPage, onNavigate }) {
   const tabs = [
     { key: "home",   label: "홈",     Icon: HomeIcon,   onClick: () => onNavigate?.("home") },
-    { key: "jobs",   label: "일자리", Icon: BagIcon,    onClick: () => alert("일자리: 준비 중입니다") },
-   // { key: "edu",    label: "교육",   Icon: BookIcon,   onClick: () => alert("교육: 준비 중입니다") },//
-    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => alert("AI: 준비 중입니다") },
+    { key: "jobs",   label: "일자리", Icon: BagIcon,    onClick: () => onNavigate?.("jobs") },
+    { key: "training", label: "교육", Icon: BookIcon, onClick: () => onNavigate?.("training") }, // alert 제거
+    { key: "ai",     label: "AI",     Icon: ChatIcon,   onClick: () => onNavigate?.("ai") },   // alert 제거
     { key: "mypage", label: "내정보", Icon: UserIcon,   onClick: () => onNavigate?.("mypage") },
   ];
 
@@ -14,8 +14,10 @@ export default function BottomNavigation({ currentPage, onNavigate }) {
     <nav className="bnv" role="navigation" aria-label="하단 탭바">
       <div className="bnv__inner">
         {tabs.map(({ key, label, Icon, onClick }) => {
-          // resumeEditor 페이지일 때 AI 탭을 활성화
-          const isActive = currentPage === key || (currentPage === "resumeEditor" && key === "ai");
+          // 더 정확한 활성 상태 체크
+          const isActive = currentPage === key || 
+                          (currentPage === "resumeEditor" && key === "ai") ||
+                          (currentPage === "job-list" && key === "jobs");
           
           return (
             <button

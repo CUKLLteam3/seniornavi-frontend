@@ -18,7 +18,7 @@ const toArr = (v) =>
  * - ✅ 401: null 반환 (로그인 API가 임시유저이므로, 화면에서 안전 처리)
  */
 
-{/*
+
 export const getMyInfo = async ({ raw = true } = {}) => {
   try {
     const r = await api.get(`/users/me`);
@@ -40,7 +40,7 @@ export const getMyInfo = async ({ raw = true } = {}) => {
     throw e;
   }
 };
-*/}
+
 
 /** =====================[ 2. 이력 내역(온보딩 설문) 조회 ]=====================
  * GET /api/profile/{userId}
