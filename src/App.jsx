@@ -76,6 +76,10 @@ function App() {
   // 네비게이션 상태 (초기값을 LOGIN으로 변경)
   const [currentScreen, setCurrentScreen] = useState(SCREENS.LOGIN);
   const [screenParams, setScreenParams] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentScreen]);
   
   // 설문 상태
   const [showSurvey, setShowSurvey] = useState(false);
@@ -116,9 +120,6 @@ function App() {
   const handleNavigate = (screen, params = null) => {
     setCurrentScreen(screen);
     setScreenParams(params);
-    
-    // 스크롤을 맨 위로 이동
-    window.scrollTo(0, 0);
   };
 
   // 로그인 성공 핸들러
