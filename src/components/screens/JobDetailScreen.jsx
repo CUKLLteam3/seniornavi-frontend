@@ -26,7 +26,7 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
     getJobDetail();
   }, [jobId]);
 
-  // 관심 목록에 저장하기 (이미 저장된 공고인지 확인 후에 저장)
+  // 관심 목록에 저장하기
   const handleSave = async (job) => {
     try {
       const savedRes = await api.get('/recruit/1');
@@ -54,10 +54,43 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
     setShowModal(false);
   };
 
+  // 뒤로가기 함수
+  const handleBack = () => {
+    if (onNavigate) {
+      onNavigate('job-list'); // 일자리 목록으로 돌아가기
+    } else {
+      window.history.back();
+    }
+  };
+
   // 로딩 화면
   if (loading) {
     return (
       <div className="pg">
+        {/* ✅ 헤더 추가 */}
+        <header className="detail-header">
+          <button 
+            className="back-btn"
+            onClick={handleBack}
+            aria-label="뒤로가기"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <h1 className="header-title">일자리 상세보기</h1>
+          <div className="header-spacer" />
+        </header>
+
         <div className="text-center py-8">
           <div className="text-4xl mb-4">⏳</div>
           <p>일자리 상세보기를 불러오는 중...</p>
@@ -68,10 +101,31 @@ export const JobDetailScreen = ({ jobId, onNavigate }) => {
 
   return (
     <div className="pg">
-      <div className="title-box-d">
-        <p className="title-text-d">일자리 상세보기</p>
-      </div>
+      {/* ✅ 헤더 추가 */}
+      <header className="detail-header">
+        <button 
+          className="back-btn"
+          onClick={handleBack}
+          aria-label="뒤로가기"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h1 className="header-title">일자리 상세보기</h1>
+        <div className="header-spacer" />
+      </header>
 
+      {/* ✅ 기존 title-box-d 제거하고 콘텐츠만 유지 */}
       <div className="j-card-1">
         <div className="job-com-box">
           <img

@@ -359,7 +359,13 @@ function App() {
       
       {/* 메인 레이아웃 */}
       <Layout>
-        <div style={{ width: "401px", margin: "0 auto" }}>
+        <div style={{ 
+          width: "100%", 
+          maxWidth: "401px", 
+          margin: "0 auto",
+          padding: "0 16px",
+          boxSizing: "border-box"
+        }}>
           {getCurrentPageComponent()}
         </div>
       </Layout>

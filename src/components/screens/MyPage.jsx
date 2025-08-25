@@ -91,9 +91,14 @@ export default function MyPage({ onLogout, onNavigate }) {
     // eslint-disable-next-line
   }, [userId]);
 
-  // 관심 공고 보기(새 탭)
-  const viewRecruit = (item) => {
-    // 서버가 직접 url 필드를 줄 수도 있으니 우선 사용
+  // 관심 공고 보기 함수 수정
+const viewRecruit = (item) => {
+  const sn = item?.sn ?? item;
+  if (sn && onNavigate) {
+    // ✅ 앱 내부 JobDetailScreen으로 이동
+    onNavigate('job-detail', sn);
+  } else {
+    // ✅ 폴백: 외부 링크로 열기
     const directUrl =
       item?.url ??
       item?.link ??
@@ -107,15 +112,14 @@ export default function MyPage({ onLogout, onNavigate }) {
       return;
     }
 
-    // 저장 API가 sn 배열만 주는 스펙이면 번호로 상세 URL 구성
-    const sn = item?.sn ?? item;
     if (sn) {
       const built = `${RECRUIT_DETAIL_BASE}/${encodeURIComponent(sn)}`;
       window.open(built, "_blank", "noopener,noreferrer");
     } else {
       alert("공고 상세 정보를 찾지 못했어요.");
     }
-  };
+  }
+};
 
   // 표시용 포맷터(카드 텍스트)
   const fmtRecruit = (item) => {
